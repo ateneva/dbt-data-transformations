@@ -1,15 +1,30 @@
 
 # Local Setups
 
+<!-- TOC -->
+
+- [Local Setups](#local-setups)
+    - [Setting Up DBT](#setting-up-dbt)
+        - [create virtual environement](#create-virtual-environement)
+        - [Install DBT](#install-dbt)
+        - [check the installation has completed](#check-the-installation-has-completed)
+        - [run dbt debug](#run-dbt-debug)
+        - [Configure dbt_project.yml and profiles.yml files](#configure-dbt_projectyml-and-profilesyml-files)
+        - [Install Pakcages by running dbt deps](#install-pakcages-by-running-dbt-deps)
+        - [Authenticate to Big Query](#authenticate-to-big-query)
+        - [After authenitcating run dbt debug again to ensure your profile has been set up correctly](#after-authenitcating-run-dbt-debug-again-to-ensure-your-profile-has-been-set-up-correctly)
+
+<!-- /TOC -->
+
 ## Setting Up DBT
 
-- create virtual environement
+### create virtual environement
 
 ```bash
 python3 -m venv dbt_bq
 ```
 
-- install DBT using the following commands
+### Install DBT
 
 ```bash
 python -m pip install dbt-core dbt-ADAPTER_NAME
@@ -17,7 +32,7 @@ python -m pip install dbt-core dbt-ADAPTER_NAME
 python -m pip install dbt-core dbt-bigquery
 ```
 
-- check the installation has completed
+### check the installation has completed
 
 ```bash
 dbt --version
@@ -30,7 +45,7 @@ Plugins:
   - bigquery: 1.8.1 - Up to date!
 ```
 
-- run `dbt debug`
+### run `dbt debug`
 
 ```bash
 10:51:05  Running with dbt=1.8.2
@@ -62,7 +77,7 @@ https://docs.getdbt.com/docs/configure-your-profile
 (dbt_bq) angelina.teneva@Angelinas-MacBook-Pro repos % 
 ```
 
-- configure `dbt_project.yml` and `profiles.yml` files
+### Configure `dbt_project.yml` and `profiles.yml` files
 
 ```yml
 --profiles.yml
@@ -86,7 +101,7 @@ prod_connection:
   target: prod
 ```
 
-- add `packages.yml` and run `dbt deps`
+### Install Pakcages by running `dbt deps`
 
 ```yml
 packages:
@@ -123,13 +138,13 @@ information.
 (dbt_bq) angelina.teneva@Angelinas-MacBook-Pro dbt-data-transformations % 
 ```
 
-- authenticate to Big Query
+### Authenticate to Big Query
 
 ```bash
 gcloud auth application-default login
 ```
 
-- After authenitcating run `dbt debug` again to ensure your profile has been set up correctly
+### After authenitcating run `dbt debug` again to ensure your profile has been set up correctly
 
 ```bash
 (dbt_bq) angelina.teneva@Angelinas-MacBook-Pro dbt-data-transformations % dbt debug
