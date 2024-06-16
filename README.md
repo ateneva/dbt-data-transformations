@@ -4,15 +4,15 @@
 <!-- TOC -->
 
 - [Local Setups](#local-setups)
-    - [Setting Up DBT](#setting-up-dbt)
-        - [create virtual environement](#create-virtual-environement)
-        - [Install DBT](#install-dbt)
-        - [check the installation has completed](#check-the-installation-has-completed)
-        - [run dbt debug](#run-dbt-debug)
-        - [Configure dbt_project.yml and profiles.yml files](#configure-dbt_projectyml-and-profilesyml-files)
-        - [Install Pakcages by running dbt deps](#install-pakcages-by-running-dbt-deps)
-        - [Authenticate to Big Query](#authenticate-to-big-query)
-        - [After authenitcating run dbt debug again to ensure your profile has been set up correctly](#after-authenitcating-run-dbt-debug-again-to-ensure-your-profile-has-been-set-up-correctly)
+  - [Setting Up DBT](#setting-up-dbt)
+    - [create virtual environement](#create-virtual-environement)
+    - [Install DBT](#install-dbt)
+    - [check the installation has completed](#check-the-installation-has-completed)
+    - [run dbt debug](#run-dbt-debug)
+    - [Configure dbt_project.yml and profiles.yml files](#configure-dbt_projectyml-and-profilesyml-files)
+    - [Install Pakcages by running dbt deps](#install-pakcages-by-running-dbt-deps)
+    - [Authenticate to Big Query](#authenticate-to-big-query)
+    - [After authenitcating run dbt debug again to ensure your profile has been set up correctly](#after-authenitcating-run-dbt-debug-again-to-ensure-your-profile-has-been-set-up-correctly)
 
 <!-- /TOC -->
 

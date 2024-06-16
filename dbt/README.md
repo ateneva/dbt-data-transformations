@@ -2,15 +2,15 @@
 <!-- TOC -->
 
 - [DBT Guidelines](#dbt-guidelines)
-    - [USEFUL CLI commands](#useful-cli-commands)
-    - [Model Development guidelines](#model-development-guidelines)
-    - [In-built Materialization](#in-built-materialization)
-        - [What if the columns of my incremental model change?](#what-if-the-columns-of-my-incremental-model-change)
-    - [Options for Data Quality Tests](#options-for-data-quality-tests)
-        - [DBT Native Tests](#dbt-native-tests)
-        - [DBT-utils package](#dbt-utils-package)
-        - [DBT-expectations package](#dbt-expectations-package)
-    - [Storing Failing Test records](#storing-failing-test-records)
+  - [USEFUL CLI commands](#useful-cli-commands)
+  - [Model Development guidelines](#model-development-guidelines)
+  - [In-built Materialization](#in-built-materialization)
+    - [What if the columns of my incremental model change?](#what-if-the-columns-of-my-incremental-model-change)
+  - [Options for Data Quality Tests](#options-for-data-quality-tests)
+    - [DBT Native Tests](#dbt-native-tests)
+    - [DBT-utils package](#dbt-utils-package)
+    - [DBT-expectations package](#dbt-expectations-package)
+  - [Storing Failing Test records](#storing-failing-test-records)
 
 <!-- /TOC -->
 
