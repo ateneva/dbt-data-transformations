@@ -33,6 +33,10 @@ models:
       transformations:
         schema: the-look-prod
 
+      +persist_docs:
+        relation: true
+        columns: true
+
 data_tests:
   +store_failures: true  
   +schema: the_look_data_quality
