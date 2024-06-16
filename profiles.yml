@@ -3,6 +3,7 @@ dev_connection:
     dev:
       type: bigquery
       method: oauth
+      execution_project: data-geeking-gcp
       project: data-geeking-gcp
       dataset: the-look-dev
       location: EU
@@ -12,6 +13,7 @@ prod_connection:
     prod:
       type: bigquery
       method: oauth
+      execution_project: data-geeking-gcp
       project: data-geeking-gcp
       dataset: the-look-prod
       location: EU
