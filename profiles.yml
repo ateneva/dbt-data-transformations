@@ -1,0 +1,18 @@
+dev_connection:
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: data-geeking-gcp
+      dataset: the-look-dev
+      location: EU
+  target: dev
+prod_connection:
+  outputs:
+    prod:
+      type: bigquery
+      method: oauth
+      project: data-geeking-gcp
+      dataset: the-look-prod
+      location: EU
+  target: prod
