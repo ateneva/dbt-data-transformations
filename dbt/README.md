@@ -5,7 +5,7 @@
 - [DBT Guidelines](#dbt-guidelines)
     - [USEFUL CLI commands](#useful-cli-commands)
     - [Model Development guidelines](#model-development-guidelines)
-    - [In-built Materialization](#in-built-materialization)
+    - [Native Materialization Strategies](#native-materialization-strategies)
         - [What if the columns of my incremental model change?](#what-if-the-columns-of-my-incremental-model-change)
     - [JINJA Templates](#jinja-templates)
         - [MACROS](#macros)
@@ -64,21 +64,24 @@ More about CLI is [here](https://docs.getdbt.com/reference/node-selection/syntax
 
 ## Model Development guidelines
 
-- **USE** incremental models as much as possible to avoid processing huge volumes of data
-  - in-built incremental
+- **TRY AVOIDING REPETITION** by making use of jinja templates - <https://docs.getdbt.com/guides/advanced/using-jinja>
 
-- **TRY AVOID REPETITION** by making use of jinja templates - <https://docs.getdbt.com/guides/advanced/using-jinja>
+- **DO USE** [incremental models](https://docs.getdbt.com/docs/build/incremental-models) as much as possible to avoid processing huge volumes of data
+
+- **DO explore** what [`incremental_strategy` configs](https://docs.getdbt.com/docs/build/incremental-strategy) are available for your SQL dialect and consider their impact on cost generation
+
+- **DO** stick to the `SQL Best Practices` applicable to your database provider (DBT does not solve for bad SQL/SQL anti-pattens)
 
 ---
 
-## In-built Materialization
+## Native Materialization Strategies
 
 1. `view`         - equivalent to the combination of `DROP` and `CREATE VIEW AS`
 2. `table`        - equivalent to the combination of `DROP` and `CREATE TABLE AS`
 3. `incremental`  - equivalent to `INSERT` and `UPDATE` statements depending on if a record is found
 4. `ephemeral`    - equivalent to a `CTE`
 
-**PROs and CONs** of using each can be found on [dbt in-built materialization](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/materializations)
+**PROs and CONs** of using each can be found on <https://docs.getdbt.com/docs/building-a-dbt-project/building-models/materializations>
 
 ### What if the columns of my incremental model change?
 
@@ -89,6 +92,7 @@ using `on_schema_change`
 {{
     config(
         materialized='incremental',
+        incremental_strategy = 'merge',
         unique_key='date_day',
         on_schema_change='fail'
     )
