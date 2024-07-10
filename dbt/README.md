@@ -64,6 +64,8 @@ More about CLI is [here](https://docs.getdbt.com/reference/node-selection/syntax
 
 ## Model Development guidelines
 
+- **DO USE** [`source`](https://docs.getdbt.com/reference/dbt-jinja-functions/source) and [`ref`](https://docs.getdbt.com/reference/dbt-jinja-functions/ref) functions to ensure the data lineage of your models is properly captured in the `manifest` file
+
 - **TRY AVOIDING REPETITION** by making use of jinja templates - <https://docs.getdbt.com/guides/advanced/using-jinja>
 
 - **DO USE** [incremental models](https://docs.getdbt.com/docs/build/incremental-models) as much as possible to avoid processing huge volumes of data
