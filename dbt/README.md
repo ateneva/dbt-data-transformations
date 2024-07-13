@@ -51,9 +51,11 @@ dbt deps                                     # updates to latest version of depe
 dbt source freshness                         # determine freshnesss of all defined sources
 
 dbt build                                    # run models, tests, snapshots and seeds at once
+dbt build --fail-fast                        # stops execution after encountering the first error
 
 # models
 dbt run                                      # run all models for the project
+dbt run --fail-fast                          # stops execution after encountering the first error
 dbt run -m <file name>                       # run only a specific model
 dbt run -m +<file name>                      # run a model and its upstream dependencies
 dbt run -m <file name>+                      # run a model and its downstream dependencies
@@ -77,9 +79,13 @@ dbt run --full-refresh --select <model name> # re-create your incremental model
 # tests
 dbt test --select <model name>
 dbt test --select <subdirectory_where_test_files_exist>
-dbt test --select source:<source name>+      # run all tests defined on a source
-dbt test --select <folder path>              # run all tests in a particular folder
+dbt test --select <folder path>                # run all tests in a particular folder
+dbt test --select <parent folder>.<subfolder>  # run all tests in a particularsub folder
 dbt test --select <parent folder> --exclude <parent folder>.<subfolder>  # exclude tests from a sub-folder
+
+dbt test --select source:*                     # run ONLY tests defined on sources
+dbt test --select --exclude source:*           # run ONLY tests defined on models
+dbt test --select source:<source name>         # run all tests defined on a source and all its tables
 ```
 
 More about CLI is [here](https://docs.getdbt.com/reference/node-selection/syntax).
