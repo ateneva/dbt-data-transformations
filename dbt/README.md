@@ -3,6 +3,7 @@
 <!-- TOC -->
 
 - [DBT Guidelines](#dbt-guidelines)
+    - [DBT DEFAULT FOLDER STRUCTURE](#dbt-default-folder-structure)
     - [USEFUL CLI commands](#useful-cli-commands)
     - [Model Development guidelines](#model-development-guidelines)
     - [Native Materialization Strategies](#native-materialization-strategies)
@@ -22,9 +23,9 @@
     - [Configuring Test Severity](#configuring-test-severity)
         - [at the poject level](#at-the-poject-level)
         - [at the model level](#at-the-model-level)
+    - [Testing Guidelines](#testing-guidelines)
 
 <!-- /TOC -->
-
 ## DBT DEFAULT FOLDER STRUCTURE
 
 ```bash
@@ -423,3 +424,13 @@ select ...
 
 {% endtest %}
 ```
+
+## Testing Guidelines
+
+- Tests on one database object can be what should be contained within the columns, what should be `the constraints of the table, or simply what is the grain.`
+
+- Test h`ow one database object refers to another` database object by checking data in one table and comparing it to another table that is either a source of truth or is less modified, has less joins
+
+- Test `something unique about your data` like specific business logic.
+
+- Test the `freshness of your raw source data` (pipeline tests) to ensure models don’t run on stale data
