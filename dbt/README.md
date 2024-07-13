@@ -15,6 +15,9 @@
         - [DBT-utils package](#dbt-utils-package)
         - [DBT-expectations package](#dbt-expectations-package)
     - [Storing Failing Test records](#storing-failing-test-records)
+    - [Configuring Test Severity](#configuring-test-severity)
+        - [at the poject level](#at-the-poject-level)
+        - [at the model level](#at-the-model-level)
 
 <!-- /TOC -->
 
@@ -328,3 +331,53 @@ data_tests:
   - A test's results will always replace previous failures for the same test.
 
 This makes it very easy to root-cause/identify where the data quality issues detected by the test are
+
+## [Configuring Test Severity](https://docs.getdbt.com/reference/resource-configs/severity)
+
+- `severity`: error or warn (default: error)
+- `error_if`: conditional expression (default: !=0)
+- `warn_if`: conditional expression (default: !=0)
+
+Conditional expressions can be any comparison logic that is supported by your SQL syntax with an integer number of failures:  `> 5`, `= 0`, `between 5 and 10`, and so on.
+
+### at the poject level
+
+```yml
+tests:
+  +severity: warn  # all tests
+
+```
+
+### at the model level
+
+```yml
+models:
+  - name: large_table
+    columns:
+      - name: slightly_unreliable_column
+        tests:
+          - unique:
+              config:
+                severity: error
+                error_if: ">1000"
+                warn_if: ">10"
+```
+
+```sql
+-- tests/filename.sql
+{{ config(error_if = '>50') }}
+
+select ...
+```
+
+```sql
+-- macros/filename.sql
+
+{% test <testname>(model, column_name) %}
+
+{{ config(severity = 'warn') }}
+
+select ...
+
+{% endtest %}
+```
