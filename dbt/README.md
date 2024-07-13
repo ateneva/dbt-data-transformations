@@ -3,21 +3,29 @@
 <!-- TOC -->
 
 - [DBT Guidelines](#dbt-guidelines)
-    - [USEFUL CLI commands](#useful-cli-commands)
-    - [Model Development guidelines](#model-development-guidelines)
-    - [Native Materialization Strategies](#native-materialization-strategies)
-        - [What if the columns of my incremental model change?](#what-if-the-columns-of-my-incremental-model-change)
-    - [JINJA Templates](#jinja-templates)
-        - [MACROS](#macros)
-    - [Using Packages](#using-packages)
-    - [Options for Data Quality Tests](#options-for-data-quality-tests)
-        - [DBT Native Tests](#dbt-native-tests)
-        - [DBT-utils package](#dbt-utils-package)
-        - [DBT-expectations package](#dbt-expectations-package)
-    - [Storing Failing Test records](#storing-failing-test-records)
+  - [DBT DEFAULT FOLDER STRUCTURE](#dbt-default-folder-structure)
+  - [USEFUL CLI commands](#useful-cli-commands)
+  - [Model Development guidelines](#model-development-guidelines)
+  - [Native Materialization Strategies](#native-materialization-strategies)
+    - [What if the columns of my incremental model change?](#what-if-the-columns-of-my-incremental-model-change)
+  - [JINJA Templates](#jinja-templates)
+    - [MACROS](#macros)
+  - [Using Packages](#using-packages)
+    - [dbt_date](#dbt_date)
+    - [codegen](#codegen)
+    - [dbt-audit-helper](#dbt-audit-helper)
+    - [dbt_project_evaluator](#dbt_project_evaluator)
+  - [Options for Data Quality Tests](#options-for-data-quality-tests)
+    - [DBT DATA Tests](#dbt-data-tests)
+    - [DBT-utils package](#dbt-utils-package)
+    - [DBT-expectations package](#dbt-expectations-package)
+  - [Storing Failing Test records](#storing-failing-test-records)
+  - [Configuring Test Severity](#configuring-test-severity)
+    - [at the poject level](#at-the-poject-level)
+    - [at the model level](#at-the-model-level)
+  - [Testing Guidelines](#testing-guidelines)
 
 <!-- /TOC -->
-
 ## DBT DEFAULT FOLDER STRUCTURE
 
 ```bash
@@ -43,9 +51,11 @@ dbt deps                                     # updates to latest version of depe
 dbt source freshness                         # determine freshnesss of all defined sources
 
 dbt build                                    # run models, tests, snapshots and seeds at once
+dbt build --fail-fast                        # stops execution after encountering the first error
 
 # models
 dbt run                                      # run all models for the project
+dbt run --fail-fast                          # stops execution after encountering the first error
 dbt run -m <file name>                       # run only a specific model
 dbt run -m +<file name>                      # run a model and its upstream dependencies
 dbt run -m <file name>+                      # run a model and its downstream dependencies
@@ -69,9 +79,13 @@ dbt run --full-refresh --select <model name> # re-create your incremental model
 # tests
 dbt test --select <model name>
 dbt test --select <subdirectory_where_test_files_exist>
-dbt test --select source:<source name>+      # run all tests defined on a source
-dbt test --select <folder path>              # run all tests in a particular folder
+dbt test --select <folder path>                # run all tests in a particular folder
+dbt test --select <parent folder>.<subfolder>  # run all tests in a particularsub folder
 dbt test --select <parent folder> --exclude <parent folder>.<subfolder>  # exclude tests from a sub-folder
+
+dbt test --select source:*                     # run ONLY tests defined on sources
+dbt test --select --exclude source:*           # run ONLY tests defined on models
+dbt test --select source:<source name>         # run all tests defined on a source and all its tables
 ```
 
 More about CLI is [here](https://docs.getdbt.com/reference/node-selection/syntax).
@@ -170,11 +184,15 @@ This allows us to document our code inline. This will not be rendered in the pur
 
 ## [Using Packages](https://docs.getdbt.com/docs/build/packages#how-do-i-add-a-package-to-my-project)
 
-- [`dbt_date`](https://hub.getdbt.com/calogica/dbt_date/latest/) is an open-source package created by [`catalogica`](https://hub.getdbt.com/calogica/) that offers a number of macros that allow you to easily calculate time between different dates, making your code easily portable between differnet SQL dialects
+### [dbt_date]((<https://hub.getdbt.com/calogica/dbt_date/latest/>))
 
-- [`codegen`](https://hub.getdbt.com/dbt-labs/codegen/latest/) is a handy open-source package that allows the automatic generation of `.yml` files describing your models
+- `dbt_date` is an open-source package created by [`catalogica`](https://hub.getdbt.com/calogica/) that offers a number of macros that allow you to easily calculate time between different dates, making your code easily portable between differnet SQL dialects
 
-  Thanks [`persist_docs`](https://docs.getdbt.com/reference/resource-configs/persist_docs) defined in `dbt_project` file the descriptions you provide in your `.yml` files will be persisted as metadata in the database you use
+### [codegen](https://hub.getdbt.com/dbt-labs/codegen/latest/)
+
+- `codegen` is a handy open-source package created by [`dbt-labs`] that allows the automatic generation of `.yml` files describing your models
+
+  Thanks to [`persist_docs`](https://docs.getdbt.com/reference/resource-configs/persist_docs) defined in `dbt_project` file the descriptions you provide in your `.yml` files will be persisted as metadata in the database you use
 
 ```bash
       +persist_docs:
@@ -182,37 +200,319 @@ This allows us to document our code inline. This will not be rendered in the pur
         columns: true
 ```
 
+### [dbt-audit-helper](https://hub.getdbt.com/dbt-labs/audit_helper/latest/)
+
+- `dbt-audit-helper` by [`dbt-labs`] provides a set of macros to compare data audits and can be incredibly useful when migrating from one database to another
+
+```sql
+{% set old_relation = adapter.get_relation(
+      database = "old_database",
+      schema = "old_schema",
+      identifier = "fct_orders"
+) -%}
+
+{% set dbt_relation = ref('fct_orders') %}
+```
+
+- `compare_relations` - returns a summary of the count of rows that are unique to a, unique to b, identical + % diff
+
+```python
+{{ audit_helper.compare_relations(
+    a_relation = old_relation,
+    b_relation = dbt_relation,
+    exclude_columns = ["loaded_at"],
+    primary_key = "order_id"
+) }}
+```
+
+- `compare_row_counts` - simple comparison of the row counts in two relations
+
+```python
+{{ audit_helper.compare_row_counts(
+    a_relation = old_relation,
+    b_relation = dbt_relation
+) }}
+```
+
+- `compare_which_columns_differ` - which common columns between two relations contain any value level changes
+
+```python
+{{ audit_helper.compare_which_columns_differ(
+    a_relation = old_relation,
+    b_relation = dbt_relation,
+    exclude_columns = ["loaded_at"],
+    primary_key = "order_id"
+) }}
+```
+
+- `compare_all_columns` - Similar to compare_column_values, except it can be used to compare `all columns' values` across two relations.
+
+```python
+{{ audit_helper.compare_all_columns(
+    a_relation = old_relation,
+    b_relation = dbt_relation,
+    primary_key = "order_id"
+) }}
+```
+
+### [dbt_project_evaluator](https://hub.getdbt.com/dbt-labs/dbt_project_evaluator/latest/)
+
+- `dbt_project_evaluator` by [`dbt-labs`] helps you determine if your dbt setup/usage is in line with best practices in terms of:
+
+  - Modeling
+  - Testing
+  - Documentation
+  - Structure
+  - Performance
+  - Governance
+
 ---
 
 ## Options for Data Quality Tests
 
-### DBT Native Tests
+### [DBT DATA Tests](https://docs.getdbt.com/docs/build/data-tests)
 
-- generic tests - <https://docs.getdbt.com/docs/build/data-tests#generic-data-tests>
 - singular tests - <https://docs.getdbt.com/docs/build/data-tests#singular-data-tests>
 
-### DBT-utils package
+```sql
+select
+    order_id,
+    sum(amount) as total_amount
+from {{ ref('fct_payments' )}}
+group by 1
+having total_amount < 0
+```
 
-- `dbt_utils` is an open-source package by `dbt-labs` that is enabled in this repo. You can find more about the tests avaialable through this package in <https://hub.getdbt.com/dbt-labs/dbt_utils/latest/>
+- generic `out-of-the-box` tests - <https://docs.getdbt.com/docs/build/data-tests#generic-data-tests>
 
-### DBT-expectations package
+```yml
+version: 2
+
+models:
+  - name: orders
+    columns:
+      - name: order_id
+        tests:
+          - unique:
+              config:
+                where: "order_date > '2021-06-21'"
+          - not_null:
+              config:
+                limit: 10
+      - name: status
+        tests:
+          - accepted_values:
+              values: ['placed', 'shipped', 'completed', 'returned']
+      - name: customer_id
+        tests:
+          - relationships:
+              to: ref('customers')
+              field: id
+```
+
+- defining your own generic tests - <https://docs.getdbt.com/best-practices/writing-custom-generic-tests>
+
+```sql
+{% test is_even(model, column_name) %}
+with validation as (
+    select
+        {{ column_name }} as even_field
+    from {{ model }}
+),
+validation_errors as (
+    select
+        even_field
+    from validation
+    -- if this is true, then even_field is actually odd!
+    where (even_field % 2) = 1
+)
+select *
+from validation_errors
+{% endtest %}
+```
+
+### [DBT-utils package](<https://hub.getdbt.com/dbt-labs/dbt_utils/latest/>)
+
+- `dbt_utils` is an open-source package by `dbt-labs` that is enabled in this repo.
+
+Some of its most useful tests are:
+
+```yml
+models:
+  - name: model_name
+    columns:
+      - name: column_name
+        tests:
+          - dbt_utils.not_empty_string
+```
+
+```yml
+models:
+  - name: my_model
+    columns:
+      - name: id
+        tests:
+          - dbt_utils.not_null_proportion:
+              at_least: 0.95
+```
+
+```yml
+models:
+  - name: model_name
+    columns:
+      - name: id
+        tests:
+          - dbt_utils.relationships_where:
+              to: ref('other_model_name')
+              field: client_id
+              from_condition: id <> '-1'
+              to_condition: created_date >= '2020-01-01'
+```
+
+```yml
+models:
+  - name: orders
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - country_code
+            - order_id
+```
+
+### [DBT-expectations package](<https://hub.getdbt.com/calogica/dbt_expectations/latest/>)
 
 - `dbt_expectations` is an open-source package created by `catalogica` that is enabled in this repo.
   
   Inspired by the Great Expectations package for Python, its intent is to allow dbt users to deploy GE-like tests in their data warehouse directly from dbt, vs having to add another integration with their data warehouse.
 
-  You can find more about the pre-defined test it offers on <https://hub.getdbt.com/calogica/dbt_expectations/latest/>
+Some useful tests are :
 
-## Storing Failing Test records
+```yml
+tests:
+  - dbt_expectations.expect_row_values_to_have_recent_data:
+      datepart: day
+      interval: 1
+      row_condition: 'id is not null' #optional
+```
 
-The failing records of every data quality test that runs in DBT are being stored by default in tables specified in `dbt_project.yml` file
+```yml
+tests:
+  - dbt_expectations.expect_column_values_to_not_be_null:
+      row_condition: "id is not null" # (Optional)
+```
 
-- the table has the same schema structure as the original table
+```yml
+tests:
+  - dbt_expectations.expect_column_values_to_be_unique:
+      row_condition: "id is not null" # (Optional)
+```
 
-  - if there are no failing test, the table of the test is empty
+```yml
+tests:
+  - dbt_expectations.expect_column_values_to_match_regex:
+      regex: "[at]+"
+      row_condition: "id is not null" # (Optional)
+      is_raw: True # (Optional)
+      flags: i # (Optional)
+```
+
+```yml
+models: # or seeds:
+  - name: my_model
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 1 # (Optional)
+          max_value: 4 # (Optional)
+          group_by: [group_id, other_group_id, ...] # (Optional)
+          row_condition: "id is not null" # (Optional)
+          strictly: false # (Optional. Adds an 'or equal to' to the comparison operator for min/max)
+```
+
+```yml
+tests:
+  - dbt_expectations.expect_compound_columns_to_be_unique:
+      column_list: ["date_col", "col_string_b"]
+      ignore_row_if: "any_value_is_missing" # (Optional. Default is 'all_values_are_missing')
+      quote_columns: false # (Optional)
+      row_condition: "id is not null" # (Optional)
+```
+
+## [Storing Failing Test records](https://docs.getdbt.com/docs/build/data-tests#storing-test-failures)
+
+DBT has been configurted to store the failing records of every data quality test
+
+```yml
+data_tests:
+  +store_failures: true  
+  +schema: the_look_data_quality
+```
+
+- the table has the same schema structure as the `model` table
+
+  - if there are no failing tests, the table of the test is empty
 
 - the table only contains the records that have failed to pass the pre-defined test
 
   - A test's results will always replace previous failures for the same test.
 
 This makes it very easy to root-cause/identify where the data quality issues detected by the test are
+
+## [Configuring Test Severity](https://docs.getdbt.com/reference/resource-configs/severity)
+
+- `severity`: error or warn (default: error)
+- `error_if`: conditional expression (default: !=0)
+- `warn_if`: conditional expression (default: !=0)
+
+Conditional expressions can be any comparison logic that is supported by your SQL syntax with an integer number of failures:  `> 5`, `= 0`, `between 5 and 10`, and so on.
+
+### at the poject level
+
+```yml
+tests:
+  +severity: warn  # all tests
+
+```
+
+### at the model level
+
+```yml
+models:
+  - name: large_table
+    columns:
+      - name: slightly_unreliable_column
+        tests:
+          - unique:
+              config:
+                severity: error
+                error_if: ">1000"
+                warn_if: ">10"
+```
+
+```sql
+-- tests/filename.sql
+{{ config(error_if = '>50') }}
+
+select ...
+```
+
+```sql
+-- macros/filename.sql
+
+{% test <testname>(model, column_name) %}
+
+{{ config(severity = 'warn') }}
+
+select ...
+
+{% endtest %}
+```
+
+## Testing Guidelines
+
+- Tests on one database object can be what should be contained within the columns, what should be `the constraints of the table, or simply what is the grain.`
+
+- Test h`ow one database object refers to another` database object by checking data in one table and comparing it to another table that is either a source of truth or is less modified, has less joins
+
+- Test `something unique about your data` like specific business logic.
+
+- Test the `freshness of your raw source data` (pipeline tests) to ensure models don’t run on stale data
