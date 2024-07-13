@@ -11,7 +11,7 @@
         - [MACROS](#macros)
     - [Using Packages](#using-packages)
     - [Options for Data Quality Tests](#options-for-data-quality-tests)
-        - [DBT Native Tests](#dbt-native-tests)
+        - [DBT DATA Tests](#dbt-data-tests)
         - [DBT-utils package](#dbt-utils-package)
         - [DBT-expectations package](#dbt-expectations-package)
     - [Storing Failing Test records](#storing-failing-test-records)
@@ -186,30 +186,142 @@ This allows us to document our code inline. This will not be rendered in the pur
 
 ## Options for Data Quality Tests
 
-### DBT Native Tests
+### [DBT DATA Tests](https://docs.getdbt.com/docs/build/data-tests)
 
-- generic tests - <https://docs.getdbt.com/docs/build/data-tests#generic-data-tests>
 - singular tests - <https://docs.getdbt.com/docs/build/data-tests#singular-data-tests>
 
-### DBT-utils package
+```sql
+select
+    order_id,
+    sum(amount) as total_amount
+from {{ ref('fct_payments' )}}
+group by 1
+having total_amount < 0
+```
 
-- `dbt_utils` is an open-source package by `dbt-labs` that is enabled in this repo. You can find more about the tests avaialable through this package in <https://hub.getdbt.com/dbt-labs/dbt_utils/latest/>
+- generic tests - <https://docs.getdbt.com/docs/build/data-tests#generic-data-tests>
 
-### DBT-expectations package
+```yml
+version: 2
+
+models:
+  - name: orders
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: status
+        tests:
+          - accepted_values:
+              values: ['placed', 'shipped', 'completed', 'returned']
+      - name: customer_id
+        tests:
+          - relationships:
+              to: ref('customers')
+              field: id
+```
+
+### [DBT-utils package](<https://hub.getdbt.com/dbt-labs/dbt_utils/latest/>)
+
+- `dbt_utils` is an open-source package by `dbt-labs` that is enabled in this repo.
+
+Some of its most useful tests are: 
+
+```yml
+models:
+  - name: model_name
+    columns:
+      - name: column_name
+        tests:
+          - dbt_utils.not_empty_string
+```
+
+```yml
+models:
+  - name: my_model
+    columns:
+      - name: id
+        tests:
+          - dbt_utils.not_null_proportion:
+              at_least: 0.95
+```
+
+```yml
+models:
+  - name: model_name
+    columns:
+      - name: id
+        tests:
+          - dbt_utils.relationships_where:
+              to: ref('other_model_name')
+              field: client_id
+              from_condition: id <> '4ca448b8-24bf-4b88-96c6-b1609499c38b'
+              to_condition: created_date >= '2020-01-01'
+```
+
+### [DBT-expectations package](<https://hub.getdbt.com/calogica/dbt_expectations/latest/>)
 
 - `dbt_expectations` is an open-source package created by `catalogica` that is enabled in this repo.
   
   Inspired by the Great Expectations package for Python, its intent is to allow dbt users to deploy GE-like tests in their data warehouse directly from dbt, vs having to add another integration with their data warehouse.
 
-  You can find more about the pre-defined test it offers on <https://hub.getdbt.com/calogica/dbt_expectations/latest/>
+Some useful tests are :
 
-## Storing Failing Test records
+```yml
+tests:
+  - dbt_expectations.expect_row_values_to_have_recent_data:
+      datepart: day
+      interval: 1
+      row_condition: 'id is not null' #optional
+```
 
-The failing records of every data quality test that runs in DBT are being stored by default in tables specified in `dbt_project.yml` file
+```yml
+tests:
+  - dbt_expectations.expect_column_values_to_not_be_null:
+      row_condition: "id is not null" # (Optional)
+```
 
-- the table has the same schema structure as the original table
+```yml
+tests:
+  - dbt_expectations.expect_column_values_to_be_unique:
+      row_condition: "id is not null" # (Optional)
+```
 
-  - if there are no failing test, the table of the test is empty
+```yml
+tests:
+  - dbt_expectations.expect_column_values_to_match_regex:
+      regex: "[at]+"
+      row_condition: "id is not null" # (Optional)
+      is_raw: True # (Optional)
+      flags: i # (Optional)
+```
+
+```yml
+models: # or seeds:
+  - name: my_model
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 1 # (Optional)
+          max_value: 4 # (Optional)
+          group_by: [group_id, other_group_id, ...] # (Optional)
+          row_condition: "id is not null" # (Optional)
+          strictly: false # (Optional. Adds an 'or equal to' to the comparison operator for min/max)
+```
+
+## [Storing Failing Test records](https://docs.getdbt.com/docs/build/data-tests#storing-test-failures)
+
+DBT has been configurted to store the failing records of every data quality test
+
+```yml
+data_tests:
+  +store_failures: true  
+  +schema: the_look_data_quality
+```
+
+- the table has the same schema structure as the `model` table
+
+  - if there are no failing tests, the table of the test is empty
 
 - the table only contains the records that have failed to pass the pre-defined test
 
