@@ -282,8 +282,18 @@ models:
           - dbt_utils.relationships_where:
               to: ref('other_model_name')
               field: client_id
-              from_condition: id <> '4ca448b8-24bf-4b88-96c6-b1609499c38b'
+              from_condition: id <> '-1'
               to_condition: created_date >= '2020-01-01'
+```
+
+```yml
+models:
+  - name: orders
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - country_code
+            - order_id
 ```
 
 ### [DBT-expectations package](<https://hub.getdbt.com/calogica/dbt_expectations/latest/>)
