@@ -10,6 +10,10 @@
     - [JINJA Templates](#jinja-templates)
         - [MACROS](#macros)
     - [Using Packages](#using-packages)
+        - [dbt_date](#dbt_date)
+        - [codegen](#codegen)
+        - [dbt-audit-helper](#dbt-audit-helper)
+        - [dbt_project_evaluator](#dbt_project_evaluator)
     - [Options for Data Quality Tests](#options-for-data-quality-tests)
         - [DBT DATA Tests](#dbt-data-tests)
         - [DBT-utils package](#dbt-utils-package)
@@ -173,17 +177,36 @@ This allows us to document our code inline. This will not be rendered in the pur
 
 ## [Using Packages](https://docs.getdbt.com/docs/build/packages#how-do-i-add-a-package-to-my-project)
 
-- [`dbt_date`](https://hub.getdbt.com/calogica/dbt_date/latest/) is an open-source package created by [`catalogica`](https://hub.getdbt.com/calogica/) that offers a number of macros that allow you to easily calculate time between different dates, making your code easily portable between differnet SQL dialects
+### [dbt_date]((https://hub.getdbt.com/calogica/dbt_date/latest/))
 
-- [`codegen`](https://hub.getdbt.com/dbt-labs/codegen/latest/) is a handy open-source package that allows the automatic generation of `.yml` files describing your models
+- `dbt_date` is an open-source package created by [`catalogica`](https://hub.getdbt.com/calogica/) that offers a number of macros that allow you to easily calculate time between different dates, making your code easily portable between differnet SQL dialects
 
-  Thanks [`persist_docs`](https://docs.getdbt.com/reference/resource-configs/persist_docs) defined in `dbt_project` file the descriptions you provide in your `.yml` files will be persisted as metadata in the database you use
+### [codegen](https://hub.getdbt.com/dbt-labs/codegen/latest/)
+
+- `codegen` is a handy open-source package created by [`dbt-labs`] that allows the automatic generation of `.yml` files describing your models
+
+  Thanks to [`persist_docs`](https://docs.getdbt.com/reference/resource-configs/persist_docs) defined in `dbt_project` file the descriptions you provide in your `.yml` files will be persisted as metadata in the database you use
 
 ```bash
       +persist_docs:
         relation: true
         columns: true
 ```
+
+### [dbt-audit-helper](https://hub.getdbt.com/dbt-labs/audit_helper/latest/)
+
+- `dbt-audit-helper` by [`dbt-labs`] provides a set of macros to compare data audits and can be incredibly useful when migrating from one database to another
+
+### [dbt_project_evaluator](https://hub.getdbt.com/dbt-labs/dbt_project_evaluator/latest/)
+
+- `dbt_project_evaluator` by [`dbt-labs`] helps you determine if your dbt setup/usage is in line with best practices in terms of:
+
+  - Modeling
+  - Testing
+  - Documentation
+  - Structure
+  - Performance
+  - Governance
 
 ---
 
