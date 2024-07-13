@@ -3,27 +3,27 @@
 <!-- TOC -->
 
 - [DBT Guidelines](#dbt-guidelines)
-    - [DBT DEFAULT FOLDER STRUCTURE](#dbt-default-folder-structure)
-    - [USEFUL CLI commands](#useful-cli-commands)
-    - [Model Development guidelines](#model-development-guidelines)
-    - [Native Materialization Strategies](#native-materialization-strategies)
-        - [What if the columns of my incremental model change?](#what-if-the-columns-of-my-incremental-model-change)
-    - [JINJA Templates](#jinja-templates)
-        - [MACROS](#macros)
-    - [Using Packages](#using-packages)
-        - [dbt_date](#dbt_date)
-        - [codegen](#codegen)
-        - [dbt-audit-helper](#dbt-audit-helper)
-        - [dbt_project_evaluator](#dbt_project_evaluator)
-    - [Options for Data Quality Tests](#options-for-data-quality-tests)
-        - [DBT DATA Tests](#dbt-data-tests)
-        - [DBT-utils package](#dbt-utils-package)
-        - [DBT-expectations package](#dbt-expectations-package)
-    - [Storing Failing Test records](#storing-failing-test-records)
-    - [Configuring Test Severity](#configuring-test-severity)
-        - [at the poject level](#at-the-poject-level)
-        - [at the model level](#at-the-model-level)
-    - [Testing Guidelines](#testing-guidelines)
+  - [DBT DEFAULT FOLDER STRUCTURE](#dbt-default-folder-structure)
+  - [USEFUL CLI commands](#useful-cli-commands)
+  - [Model Development guidelines](#model-development-guidelines)
+  - [Native Materialization Strategies](#native-materialization-strategies)
+    - [What if the columns of my incremental model change?](#what-if-the-columns-of-my-incremental-model-change)
+  - [JINJA Templates](#jinja-templates)
+    - [MACROS](#macros)
+  - [Using Packages](#using-packages)
+    - [dbt_date](#dbt_date)
+    - [codegen](#codegen)
+    - [dbt-audit-helper](#dbt-audit-helper)
+    - [dbt_project_evaluator](#dbt_project_evaluator)
+  - [Options for Data Quality Tests](#options-for-data-quality-tests)
+    - [DBT DATA Tests](#dbt-data-tests)
+    - [DBT-utils package](#dbt-utils-package)
+    - [DBT-expectations package](#dbt-expectations-package)
+  - [Storing Failing Test records](#storing-failing-test-records)
+  - [Configuring Test Severity](#configuring-test-severity)
+    - [at the poject level](#at-the-poject-level)
+    - [at the model level](#at-the-model-level)
+  - [Testing Guidelines](#testing-guidelines)
 
 <!-- /TOC -->
 ## DBT DEFAULT FOLDER STRUCTURE
@@ -184,7 +184,7 @@ This allows us to document our code inline. This will not be rendered in the pur
 
 ## [Using Packages](https://docs.getdbt.com/docs/build/packages#how-do-i-add-a-package-to-my-project)
 
-### [dbt_date]((https://hub.getdbt.com/calogica/dbt_date/latest/))
+### [dbt_date]((<https://hub.getdbt.com/calogica/dbt_date/latest/>))
 
 - `dbt_date` is an open-source package created by [`catalogica`](https://hub.getdbt.com/calogica/) that offers a number of macros that allow you to easily calculate time between different dates, making your code easily portable between differnet SQL dialects
 
@@ -283,7 +283,7 @@ group by 1
 having total_amount < 0
 ```
 
-- generic tests - <https://docs.getdbt.com/docs/build/data-tests#generic-data-tests>
+- generic `out-of-the-box` tests - <https://docs.getdbt.com/docs/build/data-tests#generic-data-tests>
 
 ```yml
 version: 2
@@ -306,11 +306,32 @@ models:
               field: id
 ```
 
+- defining your own generic tests - <https://docs.getdbt.com/best-practices/writing-custom-generic-tests>
+
+```sql
+{% test is_even(model, column_name) %}
+with validation as (
+    select
+        {{ column_name }} as even_field
+    from {{ model }}
+),
+validation_errors as (
+    select
+        even_field
+    from validation
+    -- if this is true, then even_field is actually odd!
+    where (even_field % 2) = 1
+)
+select *
+from validation_errors
+{% endtest %}
+```
+
 ### [DBT-utils package](<https://hub.getdbt.com/dbt-labs/dbt_utils/latest/>)
 
 - `dbt_utils` is an open-source package by `dbt-labs` that is enabled in this repo.
 
-Some of its most useful tests are: 
+Some of its most useful tests are:
 
 ```yml
 models:
