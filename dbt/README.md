@@ -18,32 +18,48 @@
 
 <!-- /TOC -->
 
-## USEFUL CLI commands
+## DBT DEFAULT FOLDER STRUCTURE
+
+```bash
+
+```
+
+## [USEFUL CLI commands](https://docs.getdbt.com/reference/dbt-commands)
 
 ```bash
 # docs
+dbt docs generate                            # prodcues `manifest.json` and `catalog.json`
+dbt docs generate --no-compile               # skip project re-compilation for `manifest.json`
+dbt docs generate --empty-catalog            # skip database queries for `catalog.json`
+dbt docs serve                               # starts a webserver on port 8080 to serve your documentation locally
+
 dbt docs generate && dbt docs serve          # see lineage in the generated URL
 
 dbt debug                                    # check if your dbt setup is configured properly
 dbt --version                                # check which dbt version you're running
-dbt compile                                  # check for syntax errors 
+dbt compile                                  # generates executable SQL from model, test, and analysis
+dbt deps                                     # updates to latest version of dependencies listed in packages.yml
+
+dbt source freshness                         # determine freshnesss of all defined sources
+
+dbt build                                    # run models, tests, snapshots and seeds at once
 
 # models
 dbt run                                      # run all models for the project
-dbt run -m <model name>                      # run only a specific model
-dbt run -m +<model name>                     # run a model and its upstream dependencies
-dbt run -m <model_name>+                     # run a model and its downstream dependencies
-dbt run -m +<model name>+                    # run a model and its upstream and downstream dependencies
+dbt run -m <file name>                       # run only a specific model
+dbt run -m +<file name>                      # run a model and its upstream dependencies
+dbt run -m <file name>+                      # run a model and its downstream dependencies
+dbt run -m +<file name>+                     # run a model and its upstream and downstream dependencies
 dbt run -m source:<source name>+             # run all models that depend on a given source
-dbt run --full-refresh -m +<model name>      # re-create your incremental model
+dbt run --full-refresh -m +<file name>       # re-create your incremental model
 
 # As of dbt 1.0.3 you can also use the --select flag to run models
-dbt run --select <model name>                # run only a specific model
-dbt run --select +<model name>               # run a model and its upstream dependencies
-dbt run --select <model_name>+               # run a model and its downstream dependencies
-dbt run --select +<model name>+              # run a model and its upstream and downstream dependencies
-dbt run --select source:<source name>+       # run all models that depend on a given source
-dbt run --select <folder path>               # run all models in a specific directory
+dbt run --select <file name>                  # run only a specific model
+dbt run --select +<file name>                 # run a model and its upstream dependencies
+dbt run --select <file name>+                 # run a model and its downstream dependencies
+dbt run --select +<file name>+                # run a model and its upstream and downstream dependencies
+dbt run --select source:<source name>+        # run all models that depend on a given source
+dbt run --select <folder path>                # run all models in a specific directory
 dbt run --select <folder path>.<sub foilder>.* # run all models in a specific sub-directory
 
 # run all models except the specified one and its upstream dependencies
