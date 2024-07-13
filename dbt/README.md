@@ -70,7 +70,7 @@ More about CLI is [here](https://docs.getdbt.com/reference/node-selection/syntax
 
 - **DO USE** [incremental models](https://docs.getdbt.com/docs/build/incremental-models) as much as possible to avoid processing huge volumes of data
 
-- **DO explore** what [`incremental_strategy` configs](https://docs.getdbt.com/docs/build/incremental-strategy) are available for your SQL dialect and consider their impact on cost generation
+- **DO explore** what [`incremental_strategy` configs](https://docs.getdbt.com/docs/build/incremental-strategy) are available for your database and consider their impact on cost generation
 
 - **DO** stick to the `SQL Best Practices` applicable to your database provider (DBT does not solve for bad SQL/SQL anti-pattens)
 
@@ -82,6 +82,16 @@ More about CLI is [here](https://docs.getdbt.com/reference/node-selection/syntax
 2. `table`        - equivalent to the combination of `DROP` and `CREATE TABLE AS`
 3. `incremental`  - equivalent to `INSERT` and `UPDATE` statements depending on if a record is found
 4. `ephemeral`    - equivalent to a `CTE`
+
+5. `materialized_views` - combine the query performance of a table with the data freshness of a view; [as of version 1.6](https://docs.getdbt.com/blog/announcing-materialized-views)
+
+```bash
+{{
+config(
+    materialized = 'materialized_view',
+)
+}}
+```
 
 **PROs and CONs** of using each can be found on <https://docs.getdbt.com/docs/building-a-dbt-project/building-models/materializations>
 
