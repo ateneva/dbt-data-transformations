@@ -204,6 +204,57 @@ This allows us to document our code inline. This will not be rendered in the pur
 
 - `dbt-audit-helper` by [`dbt-labs`] provides a set of macros to compare data audits and can be incredibly useful when migrating from one database to another
 
+```sql
+{% set old_relation = adapter.get_relation(
+      database = "old_database",
+      schema = "old_schema",
+      identifier = "fct_orders"
+) -%}
+
+{% set dbt_relation = ref('fct_orders') %}
+```
+
+- `compare_relations` - returns a summary of the count of rows that are unique to a, unique to b, identical + % diff
+
+```python
+{{ audit_helper.compare_relations(
+    a_relation = old_relation,
+    b_relation = dbt_relation,
+    exclude_columns = ["loaded_at"],
+    primary_key = "order_id"
+) }}
+```
+
+- `compare_row_counts` - simple comparison of the row counts in two relations
+
+```python
+{{ audit_helper.compare_row_counts(
+    a_relation = old_relation,
+    b_relation = dbt_relation
+) }}
+```
+
+- `compare_which_columns_differ` - which common columns between two relations contain any value level changes
+
+```python
+{{ audit_helper.compare_which_columns_differ(
+    a_relation = old_relation,
+    b_relation = dbt_relation,
+    exclude_columns = ["loaded_at"],
+    primary_key = "order_id"
+) }}
+```
+
+- `compare_all_columns` - Similar to compare_column_values, except it can be used to compare `all columns' values` across two relations.
+
+```python
+{{ audit_helper.compare_all_columns(
+    a_relation = old_relation,
+    b_relation = dbt_relation,
+    primary_key = "order_id"
+) }}
+```
+
 ### [dbt_project_evaluator](https://hub.getdbt.com/dbt-labs/dbt_project_evaluator/latest/)
 
 - `dbt_project_evaluator` by [`dbt-labs`] helps you determine if your dbt setup/usage is in line with best practices in terms of:
