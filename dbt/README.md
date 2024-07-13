@@ -293,8 +293,12 @@ models:
     columns:
       - name: order_id
         tests:
-          - unique
-          - not_null
+          - unique:
+              config:
+                where: "order_date > '2021-06-21'"
+          - not_null:
+              config:
+                limit: 10
       - name: status
         tests:
           - accepted_values:
