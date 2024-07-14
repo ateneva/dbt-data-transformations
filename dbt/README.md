@@ -9,6 +9,13 @@
   - [Native Materialization Strategies](#native-materialization-strategies)
     - [What if the columns of my incremental model change?](#what-if-the-columns-of-my-incremental-model-change)
   - [JINJA Templates](#jinja-templates)
+    - [JINJA FUNCTIONS](#jinja-functions)
+      - [source](#source)
+      - [ref](#ref)
+      - [set](#set)
+      - [this](#this)
+      - [var](#var)
+      - [docs](#docs)
     - [MACROS](#macros)
   - [Using Packages](#using-packages)
     - [dbt_date](#dbt_date)
@@ -29,7 +36,13 @@
 ## DBT DEFAULT FOLDER STRUCTURE
 
 ```bash
-
+dbt
+├── analyses      # store one-off ad-hoc sql, not included in dbt run
+├── macros        # store your functions
+├── models        # store your dbt run executable codebase
+├── seeds         # store ad-hoc csv files to load
+├── snapshots     # store your CDC change models
+└── tests         # store your singular and custom-generic tests
 ```
 
 ## [USEFUL CLI commands](https://docs.getdbt.com/reference/dbt-commands)
@@ -170,6 +183,88 @@ These will print text to the rendered file. In most cases in dbt, this will comp
 - `{# … #}` is used for comments
 This allows us to document our code inline. This will not be rendered in the pure SQL that you create when you run dbt compile or dbt run.
 
+### [JINJA FUNCTIONS](https://docs.getdbt.com/reference/dbt-jinja-functions)
+
+#### [`source`](https://docs.getdbt.com/reference/dbt-jinja-functions/source)
+
+```sql
+SELECT COUNT(*)
+FROM {{ source(source_name, table_name) }}
+```
+
+#### [`ref`](https://docs.getdbt.com/reference/dbt-jinja-functions/ref)
+
+```sql
+SELECT SELECT COUNT(*)
+FROM {{ ref('model_a') }}
+```
+
+#### [`set`](https://docs.getdbt.com/reference/dbt-jinja-functions/set)
+
+The set context method can be used to convert any iterable to a sequence of iterable elements that are unique (a set)
+
+```sql
+{% set my_list = [1, 2, 2, 3] %}
+{% set my_set = set(my_list) %}
+{% do log(my_set) %}  {# {1, 2, 3} #}
+```
+
+NB! Not to be confused with the `{% set foo = "bar" ... %}` expression in Jinja!
+
+#### [`this`](https://docs.getdbt.com/reference/dbt-jinja-functions/this)
+
+`this` is the database representation of the current model. It is useful when:
+
+- Defining a `where` statement within incremental models
+- Using [pre or post-hook](https://docs.getdbt.com/docs/build/hooks-operations)
+
+```sql
+{% if is_incremental() %}
+
+WHERE event_time >= (SELECT MAX(event_time) FROM {{ this }} )
+
+{% endif %}
+```
+
+#### [`var`](https://docs.getdbt.com/reference/dbt-jinja-functions/var)
+
+```yml
+name: my_dbt_project
+version: 1.0.0
+
+# Define variables here
+vars:
+  event_type: activation
+```
+
+```sql
+SELECT COUNT(*)
+FROM events 
+WHERE event_type = '{{ var("event_type", "activation") }}'
+```
+
+#### [`docs`](https://docs.getdbt.com/reference/dbt-jinja-functions/doc)
+
+The doc function is used to reference docs blocks in the description field of schema.yml files
+
+```md
+{% docs orders %}
+
+# docs
+- go
+- here
+ 
+{% enddocs %}
+```
+
+```yml
+
+version: 2
+models:
+  - name: orders
+    description: "{{ doc('orders') }}"
+```
+
 ### [MACROS](https://docs.getdbt.com/docs/build/jinja-macros#macros)
 
 - Macros serve as functions.
@@ -202,7 +297,9 @@ This allows us to document our code inline. This will not be rendered in the pur
 
 ### [dbt-audit-helper](https://hub.getdbt.com/dbt-labs/audit_helper/latest/)
 
-- `dbt-audit-helper` by [`dbt-labs`] provides a set of macros to compare data audits and can be incredibly useful when migrating from one database to another
+- `dbt-audit-helper` by [`dbt-labs`] provides a set of macros to compare data audits and can be incredibly useful:
+  - when migrating from one database to another
+  - for testing the impact of model changes
 
 ```sql
 {% set old_relation = adapter.get_relation(
@@ -511,7 +608,7 @@ select ...
 
 - Tests on one database object can be what should be contained within the columns, what should be `the constraints of the table, or simply what is the grain.`
 
-- Test h`ow one database object refers to another` database object by checking data in one table and comparing it to another table that is either a source of truth or is less modified, has less joins
+- Test `how one database object refers to another` database object by checking data in one table and comparing it to another table that is either a source of truth or is less modified, has less joins
 
 - Test `something unique about your data` like specific business logic.
 
