@@ -3,16 +3,16 @@
 <!-- TOC -->
 
 - [Local Setups](#local-setups)
-    - [Set up local airflow instance](#set-up-local-airflow-instance)
-        - [set up directory with the following structure and contents](#set-up-directory-with-the-following-structure-and-contents)
-        - [build a custom docker image that extends the official one](#build-a-custom-docker-image-that-extends-the-official-one)
-        - [use the docker-compose.yml available in the official documentation](#use-the-docker-composeyml-available-in-the-official-documentation)
-        - [spin up the local instance](#spin-up-the-local-instance)
-    - [Setting Up DBT](#setting-up-dbt)
-        - [create virtual environement](#create-virtual-environement)
+    - [Set up local Airflow instance](#set-up-local-airflow-instance)
+        - [Set up directory with the following structure and contents](#set-up-directory-with-the-following-structure-and-contents)
+        - [Build a custom docker image that extends the official one](#build-a-custom-docker-image-that-extends-the-official-one)
+        - [Use the docker-compose.yml available in the official documentation](#use-the-docker-composeyml-available-in-the-official-documentation)
+        - [Spin up the local instance](#spin-up-the-local-instance)
+    - [Set Up local DBT](#set-up-local-dbt)
+        - [Create virtual environement](#create-virtual-environement)
         - [Install DBT](#install-dbt)
-        - [check the installation has completed](#check-the-installation-has-completed)
-        - [run dbt debug](#run-dbt-debug)
+        - [Check the installation has completed](#check-the-installation-has-completed)
+        - [Run dbt debug to double check configuration](#run-dbt-debug-to-double-check-configuration)
         - [Configure dbt_project.yml and profiles.yml files](#configure-dbt_projectyml-and-profilesyml-files)
         - [Install Packages by  populating the packages.yml and running dbt deps](#install-packages-by--populating-the-packagesyml-and-running-dbt-deps)
         - [Authenticate to Big Query](#authenticate-to-big-query)
@@ -20,9 +20,9 @@
 
 <!-- /TOC -->
 
-## Set up local airflow instance
+## Set up local Airflow instance
 
-### set up directory with the following structure and contents
+### Set up directory with the following structure and contents
 
 ```plain
 airflow
@@ -47,13 +47,13 @@ dbt-bigquery==1.8.1
 astronomer-cosmos>=1.0.2
 ```
 
-### build a custom docker image that extends the official one
+### Build a custom docker image that extends the official one
 
 ```bash
 docker build . --tag dbt-cosmos
 ```
 
-### use the `docker-compose.yml` available in the [official documentation](https://airflow.apache.org/docs/apache-airflow/stable/docker-compose.yaml)
+### Use the `docker-compose.yml` available in the [official documentation](https://airflow.apache.org/docs/apache-airflow/stable/docker-compose.yaml)
 
 - replace the `image` with the one you've built
 
@@ -65,15 +65,15 @@ x-airflow-common:
   ...
 ```
 
-### spin up the local instance
+### Spin up the local instance
 
 ```bash
 docker compose --file docker-compose.yml up
 ```
 
-## Setting Up DBT
+## Set Up local DBT
 
-### create virtual environement
+### Create virtual environement
 
 ```bash
 python3 -m venv dbt_bq
@@ -84,10 +84,10 @@ python3 -m venv dbt_bq
 ```bash
 python -m pip install dbt-core dbt-ADAPTER_NAME
 
-python -m pip install dbt-core dbt-bigquery
+python -m pip install dbt-core==1.8.2 dbt-bigquery==1.8.1
 ```
 
-### check the installation has completed
+### Check the installation has completed
 
 ```bash
 dbt --version
@@ -100,7 +100,7 @@ Plugins:
   - bigquery: 1.8.1 - Up to date!
 ```
 
-### run `dbt debug`
+### Run `dbt debug` to double check configuration
 
 ```bash
 10:51:05  Running with dbt=1.8.2
