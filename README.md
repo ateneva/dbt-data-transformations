@@ -3,6 +3,11 @@
 <!-- TOC -->
 
 - [Local Setups](#local-setups)
+    - [Set up local airflow instance](#set-up-local-airflow-instance)
+        - [set up directory with the following structure and contents](#set-up-directory-with-the-following-structure-and-contents)
+        - [build a custom docker image that extends the official one](#build-a-custom-docker-image-that-extends-the-official-one)
+        - [use the docker-compose.yml available in the official documentation](#use-the-docker-composeyml-available-in-the-official-documentation)
+        - [spin up the local instance](#spin-up-the-local-instance)
     - [Setting Up DBT](#setting-up-dbt)
         - [create virtual environement](#create-virtual-environement)
         - [Install DBT](#install-dbt)
@@ -14,6 +19,57 @@
         - [After authenticating run dbt debug again to ensure your profile has been set up correctly](#after-authenticating-run-dbt-debug-again-to-ensure-your-profile-has-been-set-up-correctly)
 
 <!-- /TOC -->
+
+## Set up local airflow instance
+
+### set up directory with the following structure and contents
+
+```plain
+airflow
+├── Dockerfile
+├── docker-compose.yml
+└── requirements.txt
+```
+
+- `Dockerfile`
+
+```Dockerfile
+FROM apache/airflow:slim-2.9.3-python3.9
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+```
+
+- `requirements.txt`
+
+```txt
+dbt-core==1.8.2
+dbt-bigquery==1.8.1
+astronomer-cosmos>=1.0.2
+```
+
+### build a custom docker image that extends the official one
+
+```bash
+docker build . --tag dbt-cosmos
+```
+
+### use the `docker-compose.yml` available in the [official documentation](https://airflow.apache.org/docs/apache-airflow/stable/docker-compose.yaml)
+
+- replace the `image` with the one you've built
+
+```yml
+x-airflow-common:
+  &airflow-common  
+  image: ${AIRFLOW_IMAGE_NAME:-dbt-cosmos}
+  environment:
+  ...
+```
+
+### spin up the local instance
+
+```bash
+docker compose --file docker-compose.yml up
+```
 
 ## Setting Up DBT
 
