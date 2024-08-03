@@ -3,20 +3,21 @@
 <!-- TOC -->
 
 - [Local Setups](#local-setups)
-    - [Set up local Airflow instance](#set-up-local-airflow-instance)
-        - [Set up directory with the following structure and contents](#set-up-directory-with-the-following-structure-and-contents)
-        - [Build a custom docker image that extends the official one](#build-a-custom-docker-image-that-extends-the-official-one)
-        - [Use the docker-compose.yml available in the official documentation](#use-the-docker-composeyml-available-in-the-official-documentation)
-        - [Spin up the local instance](#spin-up-the-local-instance)
-    - [Set Up local DBT](#set-up-local-dbt)
-        - [Create virtual environement](#create-virtual-environement)
-        - [Install DBT](#install-dbt)
-        - [Check the installation has completed](#check-the-installation-has-completed)
-        - [Run dbt debug to double check configuration](#run-dbt-debug-to-double-check-configuration)
-        - [Configure dbt_project.yml and profiles.yml files](#configure-dbt_projectyml-and-profilesyml-files)
-        - [Install Packages by  populating the packages.yml and running dbt deps](#install-packages-by--populating-the-packagesyml-and-running-dbt-deps)
-        - [Authenticate to Big Query](#authenticate-to-big-query)
-        - [After authenticating run dbt debug again to ensure your profile has been set up correctly](#after-authenticating-run-dbt-debug-again-to-ensure-your-profile-has-been-set-up-correctly)
+  - [Set up local Airflow instance](#set-up-local-airflow-instance)
+    - [Set up directory with the following structure and contents](#set-up-directory-with-the-following-structure-and-contents)
+    - [Build a custom docker image that extends the official one](#build-a-custom-docker-image-that-extends-the-official-one)
+    - [Use the docker-compose.yml available in the official documentation](#use-the-docker-composeyml-available-in-the-official-documentation)
+    - [push the image to Artefact registry](#push-the-image-to-artefact-registry)
+    - [Spin up the local instance](#spin-up-the-local-instance)
+  - [Set Up local DBT](#set-up-local-dbt)
+    - [Create virtual environement](#create-virtual-environement)
+    - [Install DBT](#install-dbt)
+    - [Check the installation has completed](#check-the-installation-has-completed)
+    - [Run dbt debug to double check configuration](#run-dbt-debug-to-double-check-configuration)
+    - [Configure dbt_project.yml and profiles.yml files](#configure-dbt_projectyml-and-profilesyml-files)
+    - [Install Packages by  populating the packages.yml and running dbt deps](#install-packages-by--populating-the-packagesyml-and-running-dbt-deps)
+    - [Authenticate to Big Query](#authenticate-to-big-query)
+    - [After authenticating run dbt debug again to ensure your profile has been set up correctly](#after-authenticating-run-dbt-debug-again-to-ensure-your-profile-has-been-set-up-correctly)
 
 <!-- /TOC -->
 
@@ -63,6 +64,22 @@ x-airflow-common:
   image: ${AIRFLOW_IMAGE_NAME:-dbt-cosmos}
   environment:
   ...
+```
+
+### push the image to Artefact registry
+
+```bash
+# authenticate and configure docker
+gcloud auth login
+gcloud auth configure-docker europe-west1-docker.pkg.dev
+
+# tag image 
+docker tag `SOURCE-IMAGE` `LOCATION`-docker.pkg.dev/`PROJECT-ID`/`REPOSITORY`/`IMAGE`:`TAG`
+
+docker tag dbt-cosmos europe-west1-docker.pkg.dev/data-geeking-gcp/dbt-cosmos/dbt-cosmos
+
+# push the image 
+docker push `LOCATION`-docker.pkg.dev/`PROJECT-ID`/`REPOSITORY`/`IMAGE`
 ```
 
 ### Spin up the local instance
