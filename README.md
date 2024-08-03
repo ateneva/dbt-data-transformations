@@ -103,7 +103,7 @@ python3 -m venv dbt_bq
 ```txt
 dbt-core==1.8.2
 dbt-bigquery==1.8.1
-astronomer-cosmos>=1.0.2
+sqlfluff=3.1.0
 ```
 
 - run the requirements file
