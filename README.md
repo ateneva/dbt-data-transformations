@@ -98,10 +98,18 @@ python3 -m venv dbt_bq
 
 ### Install DBT
 
-```bash
-python -m pip install dbt-core dbt-ADAPTER_NAME
+- set up a requirements file
 
-python -m pip install dbt-core==1.8.2 dbt-bigquery==1.8.1
+```txt
+dbt-core==1.8.2
+dbt-bigquery==1.8.1
+astronomer-cosmos>=1.0.2
+```
+
+- run the requirements file
+
+```bash
+pip3 install -r requirements.txt
 ```
 
 ### Check the installation has completed
