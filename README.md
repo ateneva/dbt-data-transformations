@@ -7,7 +7,7 @@
     - [Set up directory with the following structure and contents](#set-up-directory-with-the-following-structure-and-contents)
     - [Build a custom docker image that extends the official one](#build-a-custom-docker-image-that-extends-the-official-one)
     - [Use the docker-compose.yml available in the official documentation](#use-the-docker-composeyml-available-in-the-official-documentation)
-    - [push the image to Artefact registry](#push-the-image-to-artefact-registry)
+    - [Push the image to Artefact registry](#push-the-image-to-artefact-registry)
     - [Spin up the local instance](#spin-up-the-local-instance)
   - [Set Up local DBT](#set-up-local-dbt)
     - [Create virtual environement](#create-virtual-environement)
@@ -66,7 +66,7 @@ x-airflow-common:
   ...
 ```
 
-### push the image to Artefact registry
+### Push the image to Artefact registry
 
 ```bash
 # authenticate and configure docker
