@@ -5,8 +5,8 @@ dev_connection:
       method: oauth
       execution_project: data-geeking-gcp
       project: data-geeking-gcp
-      dataset: the-look-dev
-      location: EU
+      dataset: the_look_dev
+      location: US
   target: dev
 prod_connection:
   outputs:
@@ -15,6 +15,6 @@ prod_connection:
       method: oauth
       execution_project: data-geeking-gcp
       project: data-geeking-gcp
-      dataset: the-look-prod
-      location: EU
+      dataset: the_look_prod
+      location: US
   target: prod

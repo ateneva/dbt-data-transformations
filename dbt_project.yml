@@ -31,7 +31,7 @@ models:
   dbt-data-transformations:
     the_look:
       transformations:
-        schema: the-look-prod
+        schema: the_look_prod
 
       +persist_docs:
         relation: true
