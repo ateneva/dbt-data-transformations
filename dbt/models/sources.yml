@@ -1,0 +1,142 @@
+version: 2
+
+sources:
+  - name: thelook_ecommerce
+    database: bigquery-public-data
+    tables:
+      - name: distribution_centers
+        columns:
+          - name: id
+            description: unique identifier for the table
+            data_tests:
+              - unique
+              - not_null
+
+      - name: events  
+        data_tests:
+          - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+              date_col: created_at
+              date_part: day
+              test_start_date: '2019-06-21'
+              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}' 
+
+        columns:
+          - name: id
+            description: unique identifier for the table
+            data_tests:
+              - unique
+              - not_null
+
+          - name: user_id
+            data_tests:
+              - dbt_expectations.expect_column_values_to_not_be_null:
+                  row_condition: "event_type = 'purchase'"
+
+              - relationships:
+                  to: source('thelook_ecommerce', 'users')
+                  field: id
+                  config:
+                    where: "event_type = 'purchase'"
+    
+      - name: inventory_items        
+        data_tests:
+          - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+              date_col: created_at
+              date_part: day
+              test_start_date: '2019-06-21'
+              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}' 
+
+        columns:
+          - name: id
+            description: unique identifier for the table
+            data_tests:
+              - unique
+              - not_null
+
+          - name: product_distribution_center_id
+            data_tests:
+              - not_null
+              - relationships:
+                  to: source('thelook_ecommerce', 'distribution_centers')
+                  field: id
+
+          - name: product_id
+            data_tests:
+              - not_null
+              - relationships:
+                  to: source('thelook_ecommerce', 'products')
+                  field: id
+      
+      - name: order_items
+        data_tests:
+          - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+              date_col: created_at
+              date_part: day
+              test_start_date: '2019-06-21'
+              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}' 
+
+        columns:
+          - name: id
+            description: unique identifier for the table
+            data_tests:
+              - unique
+              - not_null
+
+          - name: inventory_item_id
+            data_tests:
+              - not_null
+              - relationships:
+                  to: source('thelook_ecommerce', 'inventory_items')
+                  field: id
+
+          - name: product_id
+            data_tests:
+              - not_null
+              - relationships:
+                  to: source('thelook_ecommerce', 'products')
+                  field: id
+
+      - name: orders
+        data_tests:
+          - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+              date_col: created_at
+              date_part: day
+              test_start_date: '2019-06-21'
+              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}' 
+
+        columns:
+          - name: order_id
+            description: unique identifier for the table
+            data_tests:
+              - unique
+              - not_null
+      
+      - name: products
+        columns:
+          - name: id
+            description: unique identifier for the table
+            data_tests:
+              - unique
+              - not_null
+
+          - name: distribution_center_id
+            data_tests:
+              - not_null
+              - relationships:
+                  to: source('thelook_ecommerce', 'distribution_centers')
+                  field: id
+      
+      - name: users
+        data_tests:
+          - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
+              date_col: created_at
+              date_part: day
+              test_start_date: '2019-06-21'
+              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}' 
+
+        columns:
+          - name: id
+            description: unique identifier for the table
+            data_tests:
+              - unique
+              - not_null
