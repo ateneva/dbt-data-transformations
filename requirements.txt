@@ -5,3 +5,4 @@ sqlfluff-templater-dbt==3.2.3
 yamllint==1.35.1
 pylint==3.3.1
 pymarkdownlnt==0.9.24
+pre-commit==4.0.1
