@@ -1,15 +1,15 @@
 
-# Local Setups
+# Setup
 <!-- TOC -->
 
-- [Local Setups](#local-setups)
+- [Setup](#setup)
   - [Set up local Airflow instance](#set-up-local-airflow-instance)
     - [Set up directory with the following structure and contents](#set-up-directory-with-the-following-structure-and-contents)
     - [Build a custom docker image that extends the official one](#build-a-custom-docker-image-that-extends-the-official-one)
     - [Use the docker-compose.yml available in the official documentation](#use-the-docker-composeyml-available-in-the-official-documentation)
     - [Push the image to Artefact registry](#push-the-image-to-artefact-registry)
     - [Spin up the local instance](#spin-up-the-local-instance)
-  - [Set Up local DBT](#set-up-local-dbt)
+  - [Set up local DBT](#set-up-local-dbt)
     - [Create virtual environement](#create-virtual-environement)
     - [Install DBT](#install-dbt)
     - [Check the installation has completed](#check-the-installation-has-completed)
@@ -18,6 +18,7 @@
     - [Install Packages by  populating the packages.yml and running dbt deps](#install-packages-by--populating-the-packagesyml-and-running-dbt-deps)
     - [Authenticate to Big Query](#authenticate-to-big-query)
     - [After authenticating run dbt debug again to ensure your profile has been set up correctly](#after-authenticating-run-dbt-debug-again-to-ensure-your-profile-has-been-set-up-correctly)
+  - [Linting](#linting)
 
 <!-- /TOC -->
 
@@ -88,7 +89,7 @@ docker push `LOCATION`-docker.pkg.dev/`PROJECT-ID`/`REPOSITORY`/`IMAGE`
 docker compose --file docker-compose.yml up
 ```
 
-## Set Up local DBT
+## Set up local DBT
 
 ### Create virtual environement
 
@@ -268,4 +269,44 @@ gcloud auth application-default login
 
 11:39:41  All checks passed!
 (dbt_bq) angelina.teneva@Angelinas-MacBook-Pro dbt-data-transformations % 
+```
+
+## Linting
+
+The following linters are in place
+
+- SQL linting with [custom configuration](https://docs.sqlfluff.com/en/stable/reference/rules.html#) for `.sqlfluff`
+
+- YAML linting with [custom configuration](https://yamllint.readthedocs.io/en/stable/configuration.html) for `.yamllint`
+
+- Python linting with default configuration via `pylint`
+
+- Markdwown linting with default configuration with `pymarkdownlint`
+
+### SQL Linting
+
+To see you your SQL is compliant to the defined standard, you can run the following commands
+
+```bash
+# lint a specific file
+sqlfluff lint path/to/file.sql
+
+# lint a file directory
+sqlfluff lint directory/of/sql/files
+
+# let the linter fix your code
+sqlfluff fix folder/model.sql
+```
+
+### YAML Linting
+
+```bash
+# check which files will be linted by default
+yamllint --list-files .
+
+# lint a specific file
+yamllint my_file.yml
+
+# OR
+yamllint .
 ```
