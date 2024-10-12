@@ -3,3 +3,4 @@ logs
 dbt_packages
 target
 .vscode
+dbt_packages

@@ -1,15 +1,15 @@
 
-# Local Setups
+# Setup
 <!-- TOC -->
 
-- [Local Setups](#local-setups)
+- [Setup](#setup)
   - [Set up local Airflow instance](#set-up-local-airflow-instance)
     - [Set up directory with the following structure and contents](#set-up-directory-with-the-following-structure-and-contents)
     - [Build a custom docker image that extends the official one](#build-a-custom-docker-image-that-extends-the-official-one)
     - [Use the docker-compose.yml available in the official documentation](#use-the-docker-composeyml-available-in-the-official-documentation)
     - [Push the image to Artefact registry](#push-the-image-to-artefact-registry)
     - [Spin up the local instance](#spin-up-the-local-instance)
-  - [Set Up local DBT](#set-up-local-dbt)
+  - [Set up local DBT](#set-up-local-dbt)
     - [Create virtual environement](#create-virtual-environement)
     - [Install DBT](#install-dbt)
     - [Check the installation has completed](#check-the-installation-has-completed)
@@ -18,6 +18,7 @@
     - [Install Packages by  populating the packages.yml and running dbt deps](#install-packages-by--populating-the-packagesyml-and-running-dbt-deps)
     - [Authenticate to Big Query](#authenticate-to-big-query)
     - [After authenticating run dbt debug again to ensure your profile has been set up correctly](#after-authenticating-run-dbt-debug-again-to-ensure-your-profile-has-been-set-up-correctly)
+  - [Linting](#linting)
 
 <!-- /TOC -->
 
@@ -60,7 +61,7 @@ docker build . --tag dbt-cosmos
 
 ```yml
 x-airflow-common:
-  &airflow-common  
+  &airflow-common
   image: ${AIRFLOW_IMAGE_NAME:-dbt-cosmos}
   environment:
   ...
@@ -73,12 +74,12 @@ x-airflow-common:
 gcloud auth login
 gcloud auth configure-docker europe-west1-docker.pkg.dev
 
-# tag image 
+# tag image
 docker tag `SOURCE-IMAGE` `LOCATION`-docker.pkg.dev/`PROJECT-ID`/`REPOSITORY`/`IMAGE`:`TAG`
 
 docker tag dbt-cosmos europe-west1-docker.pkg.dev/data-geeking-gcp/dbt-cosmos/dbt-cosmos
 
-# push the image 
+# push the image
 docker push `LOCATION`-docker.pkg.dev/`PROJECT-ID`/`REPOSITORY`/`IMAGE`
 ```
 
@@ -88,7 +89,7 @@ docker push `LOCATION`-docker.pkg.dev/`PROJECT-ID`/`REPOSITORY`/`IMAGE`
 docker compose --file docker-compose.yml up
 ```
 
-## Set Up local DBT
+## Set up local DBT
 
 ### Create virtual environement
 
@@ -103,7 +104,6 @@ python3 -m venv dbt_bq
 ```txt
 dbt-core==1.8.2
 dbt-bigquery==1.8.1
-sqlfluff=3.1.0
 ```
 
 - run the requirements file
@@ -154,7 +154,7 @@ https://docs.getdbt.com/docs/configure-your-profile
 10:51:05  Project loading failed for the following reason:
  project path </Users/angelina.teneva/Documents/repos/dbt_project.yml> not found
 
-(dbt_bq) angelina.teneva@Angelinas-MacBook-Pro repos % 
+(dbt_bq) angelina.teneva@Angelinas-MacBook-Pro repos %
 ```
 
 ### Configure `dbt_project.yml` and `profiles.yml` files
@@ -215,7 +215,7 @@ information.
 11:30:36  Installing calogica/dbt_date
 11:30:36  Installed from version 0.10.1
 11:30:36  Up to date!
-(dbt_bq) angelina.teneva@Angelinas-MacBook-Pro dbt-data-transformations % 
+(dbt_bq) angelina.teneva@Angelinas-MacBook-Pro dbt-data-transformations %
 ```
 
 ### Authenticate to Big Query
@@ -268,5 +268,62 @@ gcloud auth application-default login
 11:39:41    Connection test: [OK connection ok]
 
 11:39:41  All checks passed!
-(dbt_bq) angelina.teneva@Angelinas-MacBook-Pro dbt-data-transformations % 
+(dbt_bq) angelina.teneva@Angelinas-MacBook-Pro dbt-data-transformations %
+```
+
+## Linting
+
+The following linters are in place
+
+- SQL linting with [custom configuration](https://docs.sqlfluff.com/en/stable/reference/rules.html#) for `.sqlfluff`
+
+- YAML linting with [custom configuration](https://yamllint.readthedocs.io/en/stable/configuration.html) for `.yamllint`
+
+- Python linting with default configuration via `pylint`
+
+- Markdwown linting with default configuration with `pymarkdownlint`
+
+### SQL Linting
+
+To see you your SQL is compliant to the defined standard, you can run the following commands
+
+```bash
+# lint a specific file
+sqlfluff lint path/to/file.sql
+
+# lint a file directory
+sqlfluff lint directory/of/sql/files
+
+# let the linter fix your code
+sqlfluff fix folder/model.sql
+```
+
+- SQL linting is also enforced via `sqlfluff` [pre-commit hooks](https://docs.sqlfluff.com/en/latest/production/pre_commit.html)
+
+### YAML Linting
+
+```bash
+# check which files will be linted by default
+yamllint --list-files .
+
+# lint a specific file
+yamllint my_file.yml
+
+# OR
+yamllint .
+```
+
+### pre-commit hooks have been set up in this repo to help check for
+
+- automated fix of missing lines at the end of file
+- automated fix of trailing whitespaces and files
+- autoamted detection of violations of sql standards
+
+```bash
+
+# install the githook scripts
+pre-commit install
+
+# run against all existing files
+pre-commit run --all-files
 ```

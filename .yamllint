@@ -1,0 +1,10 @@
+extends: default
+
+ignore: |
+  airflow/docker-compose.yml
+  package-lock.yml
+  dbt_packages
+
+rules:
+  line-length: disable
+  document-start: disable
