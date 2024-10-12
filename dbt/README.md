@@ -87,7 +87,7 @@ dbt run --select <folder path>                # run all models in a specific dir
 dbt run --select <folder path>.<sub foilder>.* # run all models in a specific sub-directory
 
 # run all models except the specified one and its upstream dependencies
-dbt run --select <folder path> --exclude +<model name> 
+dbt run --select <folder path> --exclude +<model name>
 dbt run --full-refresh --select <model name> # re-create your incremental model
 
 # tests
@@ -240,7 +240,7 @@ vars:
 
 ```sql
 SELECT COUNT(*)
-FROM events 
+FROM events
 WHERE event_type = '{{ var("event_type", "activation") }}'
 ```
 
@@ -254,7 +254,7 @@ The doc function is used to reference docs blocks in the description field of sc
 # docs
 - go
 - here
- 
+
 {% enddocs %}
 ```
 
@@ -480,7 +480,7 @@ models:
 ### [DBT-expectations package](<https://hub.getdbt.com/calogica/dbt_expectations/latest/>)
 
 - `dbt_expectations` is an open-source package created by `catalogica` that is enabled in this repo.
-  
+
   Inspired by the Great Expectations package for Python, its intent is to allow dbt users to deploy GE-like tests in their data warehouse directly from dbt, vs having to add another integration with their data warehouse.
 
 Some useful tests are :
@@ -541,7 +541,7 @@ DBT has been configurted to store the failing records of every data quality test
 
 ```yml
 data_tests:
-  +store_failures: true  
+  +store_failures: true
   +schema: the_look_data_quality
 ```
 

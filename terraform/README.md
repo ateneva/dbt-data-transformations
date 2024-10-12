@@ -53,7 +53,7 @@ google_bigquery_dataset.the-look-prod: Creation complete after 3s [id=projects/d
 google_bigquery_dataset.the-look-data-quality: Creation complete after 4s [id=projects/data-geeking-gcp/datasets/the_look_data_quality]
 
 Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
-tenevaa21@cloudshell:~ (data-geeking-gcp)$ 
+tenevaa21@cloudshell:~ (data-geeking-gcp)$
 ```
 
 ## Configs Automatic Deployment (GitHub Actions)

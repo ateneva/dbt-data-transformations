@@ -12,13 +12,13 @@ sources:
               - unique
               - not_null
 
-      - name: events  
+      - name: events
         data_tests:
           - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
               date_col: created_at
               date_part: day
               test_start_date: '2019-06-21'
-              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}' 
+              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
 
         columns:
           - name: id
@@ -37,14 +37,14 @@ sources:
                   field: id
                   config:
                     where: "event_type = 'purchase'"
-    
-      - name: inventory_items        
+
+      - name: inventory_items
         data_tests:
           - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
               date_col: created_at
               date_part: day
               test_start_date: '2019-06-21'
-              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}' 
+              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
 
         columns:
           - name: id
@@ -66,14 +66,14 @@ sources:
               - relationships:
                   to: source('thelook_ecommerce', 'products')
                   field: id
-      
+
       - name: order_items
         data_tests:
           - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
               date_col: created_at
               date_part: day
               test_start_date: '2019-06-21'
-              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}' 
+              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
 
         columns:
           - name: id
@@ -102,7 +102,7 @@ sources:
               date_col: created_at
               date_part: day
               test_start_date: '2019-06-21'
-              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}' 
+              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
 
         columns:
           - name: order_id
@@ -110,7 +110,7 @@ sources:
             data_tests:
               - unique
               - not_null
-      
+
       - name: products
         columns:
           - name: id
@@ -125,14 +125,14 @@ sources:
               - relationships:
                   to: source('thelook_ecommerce', 'distribution_centers')
                   field: id
-      
+
       - name: users
         data_tests:
           - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
               date_col: created_at
               date_part: day
               test_start_date: '2019-06-21'
-              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}' 
+              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
 
         columns:
           - name: id
