@@ -1,5 +1,6 @@
 
 # Setup
+
 <!-- TOC -->
 
 - [Setup](#setup)
@@ -18,7 +19,10 @@
     - [Install Packages by  populating the packages.yml and running dbt deps](#install-packages-by--populating-the-packagesyml-and-running-dbt-deps)
     - [Authenticate to Big Query](#authenticate-to-big-query)
     - [After authenticating run dbt debug again to ensure your profile has been set up correctly](#after-authenticating-run-dbt-debug-again-to-ensure-your-profile-has-been-set-up-correctly)
-  - [Linting](#linting)
+  - [Enforcing Code Quality](#enforcing-code-quality)
+    - [SQL Linting](#sql-linting)
+    - [YAML Linting](#yaml-linting)
+    - [pre-commit hooks have been set up in this repo to check and fix for](#pre-commit-hooks-have-been-set-up-in-this-repo-to-check-and-fix-for)
 
 <!-- /TOC -->
 
@@ -271,7 +275,7 @@ gcloud auth application-default login
 (dbt_bq) angelina.teneva@Angelinas-MacBook-Pro dbt-data-transformations %
 ```
 
-## Linting
+## Enforcing Code Quality
 
 The following linters are in place
 
@@ -281,11 +285,11 @@ The following linters are in place
 
 - Python linting with default configuration via `pylint`
 
-- Markdwown linting with default configuration with `pymarkdownlint`
+- Markdown linting with default configuration with `pymarkdownlint`
 
 ### SQL Linting
 
-To see you your SQL is compliant to the defined standard, you can run the following commands
+To see if your SQL is compliant to the defined standard, you can run the following commands
 
 ```bash
 # lint a specific file
@@ -298,7 +302,7 @@ sqlfluff lint directory/of/sql/files
 sqlfluff fix folder/model.sql
 ```
 
-- SQL linting is also enforced via `sqlfluff` [pre-commit hooks](https://docs.sqlfluff.com/en/latest/production/pre_commit.html)
+- SQL linting (and fixing) is enforced via [pre-commit hooks](https://docs.sqlfluff.com/en/latest/production/pre_commit.html) for `sqlfluff`
 
 ### YAML Linting
 
@@ -313,14 +317,15 @@ yamllint my_file.yml
 yamllint .
 ```
 
-### pre-commit hooks have been set up in this repo to help check for
+### pre-commit hooks have been set up in this repo to check and fix for
 
-- automated fix of missing lines at the end of file
-- automated fix of trailing whitespaces and files
-- autoamted detection of violations of sql standards
+- missing lines at the end
+- trailing whitespaces
+- violations of sql standards
+
+When working with the repo, make sure you've got the pre-commit installed so that they run upon your every commit
 
 ```bash
-
 # install the githook scripts
 pre-commit install
 
