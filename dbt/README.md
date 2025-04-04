@@ -357,12 +357,18 @@ models:
 
 - `dbt_project_evaluator` by [`dbt-labs`] helps you determine if your dbt setup/usage is in line with best practices in terms of:
 
-  - Modeling
-  - Testing
-  - Documentation
-  - Structure
-  - Performance
-  - Governance
+  - [Modeling](https://dbt-labs.github.io/dbt-project-evaluator/latest/rules/modeling/)
+  - [Testing](https://dbt-labs.github.io/dbt-project-evaluator/latest/rules/testing/)
+  - [Documentation](https://dbt-labs.github.io/dbt-project-evaluator/latest/rules/documentation/)
+  - [Structure](https://dbt-labs.github.io/dbt-project-evaluator/latest/rules/structure/)
+  - [Performance](https://dbt-labs.github.io/dbt-project-evaluator/latest/rules/performance/)
+  - [Governance](https://dbt-labs.github.io/dbt-project-evaluator/latest/rules/governance/#public-models-without-contracts)
+
+- Execute the following command to see if best practices have been followed in your project
+
+```cmd
+dbt build --select package:dbt_project_evaluator
+```
 
 ---
 

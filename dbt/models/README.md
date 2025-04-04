@@ -1,5 +1,7 @@
 
-# Testing
+# Project
+
+The project uses [thelook_ecommerce public dataset](https://console.cloud.google.com/bigquery?p=bigquery-public-data&d=thelook_ecommerce&page=dataset&invt=Abt44Q&project=data-geeking-gcp&ws=!1m4!1m3!3m2!1sbigquery-public-data!2sthelook_ecommerce)
 
 ## Testing source freshnes
 
