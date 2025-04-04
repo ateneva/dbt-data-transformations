@@ -5,6 +5,10 @@ packages:
     version: 1.2.0
   - package: dbt-labs/codegen
     version: 0.12.1
+  - package: dbt-labs/audit_helper
+    version: 0.12.1
+  - package: dbt-labs/dbt_project_evaluator
+    version: 1.0.0
   - package: calogica/dbt_date
     version: 0.10.1
-sha1_hash: d3eef1e7540694d44b4b27485b336451c10971d5
+sha1_hash: 26faa2411d5d8c13a91dc9c4fd4d71fe56c87184

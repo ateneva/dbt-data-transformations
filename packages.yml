@@ -7,3 +7,9 @@ packages:
 
   - package: dbt-labs/codegen
     version: 0.12.1
+
+  - package: dbt-labs/audit_helper
+    version: 0.12.1
+
+  - package: dbt-labs/dbt_project_evaluator
+    version: 1.0.0
