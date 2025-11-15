@@ -4,25 +4,32 @@
 <!-- TOC -->
 
 - [Setup](#setup)
-  - [Set up local Airflow instance](#set-up-local-airflow-instance)
-    - [Set up directory with the following structure and contents](#set-up-directory-with-the-following-structure-and-contents)
-    - [Build a custom docker image that extends the official one](#build-a-custom-docker-image-that-extends-the-official-one)
-    - [Use the docker-compose.yml available in the official documentation](#use-the-docker-composeyml-available-in-the-official-documentation)
-    - [Push the image to Artefact registry](#push-the-image-to-artefact-registry)
-    - [Spin up the local instance](#spin-up-the-local-instance)
-  - [Set up local DBT](#set-up-local-dbt)
-    - [Create virtual environement](#create-virtual-environement)
-    - [Install DBT](#install-dbt)
-    - [Check the installation has completed](#check-the-installation-has-completed)
-    - [Run dbt debug to double check configuration](#run-dbt-debug-to-double-check-configuration)
-    - [Configure dbt_project.yml and profiles.yml files](#configure-dbt_projectyml-and-profilesyml-files)
-    - [Install Packages by  populating the packages.yml and running dbt deps](#install-packages-by--populating-the-packagesyml-and-running-dbt-deps)
-    - [Authenticate to Big Query](#authenticate-to-big-query)
-    - [After authenticating run dbt debug again to ensure your profile has been set up correctly](#after-authenticating-run-dbt-debug-again-to-ensure-your-profile-has-been-set-up-correctly)
-  - [Enforcing Code Quality](#enforcing-code-quality)
-    - [SQL Linting](#sql-linting)
-    - [YAML Linting](#yaml-linting)
-    - [pre-commit hooks have been set up in this repo to check and fix for](#pre-commit-hooks-have-been-set-up-in-this-repo-to-check-and-fix-for)
+    - [Set up local Airflow instance](#set-up-local-airflow-instance)
+        - [Set up directory with the following structure and contents](#set-up-directory-with-the-following-structure-and-contents)
+        - [Build a custom docker image that extends the official one](#build-a-custom-docker-image-that-extends-the-official-one)
+        - [Use the docker-compose.yml available in the official documentation](#use-the-docker-composeyml-available-in-the-official-documentation)
+        - [Push the image to Artefact registry](#push-the-image-to-artefact-registry)
+        - [Spin up the local instance](#spin-up-the-local-instance)
+    - [Set up local DBT](#set-up-local-dbt)
+        - [Create virtual environement](#create-virtual-environement)
+        - [Install DBT](#install-dbt)
+        - [Check the installation has completed](#check-the-installation-has-completed)
+        - [Run dbt debug to double check configuration](#run-dbt-debug-to-double-check-configuration)
+        - [Configure dbt_project.yml and profiles.yml files](#configure-dbt_projectyml-and-profilesyml-files)
+        - [Install Packages by  populating the packages.yml and running dbt deps](#install-packages-by--populating-the-packagesyml-and-running-dbt-deps)
+        - [Authenticate to Big Query](#authenticate-to-big-query)
+        - [After authenticating run dbt debug again to ensure your profile has been set up correctly](#after-authenticating-run-dbt-debug-again-to-ensure-your-profile-has-been-set-up-correctly)
+    - [Enforcing Code Quality](#enforcing-code-quality)
+        - [SQL Linting](#sql-linting)
+        - [YAML Linting](#yaml-linting)
+        - [pre-commit hooks have been set up in this repo to check and fix for](#pre-commit-hooks-have-been-set-up-in-this-repo-to-check-and-fix-for)
+- [Data Modelling Principles & Guidelines](#data-modelling-principles--guidelines)
+    - [Be Analyst Friendly](#be-analyst-friendly)
+    - [Be Subject-Oriented](#be-subject-oriented)
+    - [Be Relevant](#be-relevant)
+    - [Be Cost Efficient](#be-cost-efficient)
+    - [Be Easy to Maintain](#be-easy-to-maintain)
+    - [Avoid complex dependencies](#avoid-complex-dependencies)
 
 <!-- /TOC -->
 
@@ -332,3 +339,43 @@ pre-commit install
 # run against all existing files
 pre-commit run --all-files
 ```
+
+---
+
+# Data Modelling Principles & Guidelines
+
+The DWH transformations of the Look e-commerce data were architected under the following principles and guidelines
+
+## Be Analyst Friendly
+
+- Analysts shouldn't have to do multiple joins to retrieve meaningful data
+
+## Be Subject-Oriented
+
+- Tables are organized around major topics of interest, such as customers, products, orders
+
+- Each subject represents One-Big-Table with nested arrays and structs
+  - child objects should never be orphans
+  - child objects will always be queried within the context of the parent object
+
+## Be Relevant
+
+- Data should reflect how current underlying platform functions
+
+- Data should reflect the topics of interest to business
+
+## Be Cost Efficient
+
+- Only process pieces of information that have changed
+
+- Avoid scanning too much data per run
+
+## Be Easy to Maintain
+
+- Backfilling historical data should be possible via the scheduled run without the need for extra code adjustments
+
+- Changes in data should be easy to trace and audit
+
+## Avoid complex dependencies
+
+- Processing by topic instead of monolitic schedules of all topics
