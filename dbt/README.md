@@ -1,37 +1,39 @@
 # DBT Guidelines
 
+<!-- markdownlint-disable MD007-->
+
 <!-- TOC -->
 
 - [DBT Guidelines](#dbt-guidelines)
-  - [DBT DEFAULT FOLDER STRUCTURE](#dbt-default-folder-structure)
-  - [USEFUL CLI commands](#useful-cli-commands)
-  - [Model Development guidelines](#model-development-guidelines)
-  - [Native Materialization Strategies](#native-materialization-strategies)
-    - [What if the columns of my incremental model change?](#what-if-the-columns-of-my-incremental-model-change)
-  - [JINJA Templates](#jinja-templates)
-    - [JINJA FUNCTIONS](#jinja-functions)
-      - [source](#source)
-      - [ref](#ref)
-      - [set](#set)
-      - [this](#this)
-      - [var](#var)
-      - [docs](#docs)
-    - [MACROS](#macros)
-  - [Using Packages](#using-packages)
-    - [dbt_date](#dbt_date)
-    - [codegen](#codegen)
-    - [dbt-audit-helper](#dbt-audit-helper)
-    - [dbt_project_evaluator](#dbt_project_evaluator)
-  - [Options for Data Quality Tests](#options-for-data-quality-tests)
-    - [DBT DATA Tests](#dbt-data-tests)
-    - [DBT-utils package](#dbt-utils-package)
-    - [DBT-expectations package](#dbt-expectations-package)
-  - [Storing Failing Test records](#storing-failing-test-records)
-  - [Configuring Test Severity](#configuring-test-severity)
-    - [at the poject level](#at-the-poject-level)
-    - [at the model level](#at-the-model-level)
-  - [Testing Guidelines](#testing-guidelines)
-  - [SQL Linting](#sql-linting)
+    - [DBT DEFAULT FOLDER STRUCTURE](#dbt-default-folder-structure)
+    - [USEFUL CLI commands](#useful-cli-commands)
+    - [Model Development guidelines](#model-development-guidelines)
+    - [Native Materialization Strategies](#native-materialization-strategies)
+        - [What if the columns of my incremental model change?](#what-if-the-columns-of-my-incremental-model-change)
+    - [JINJA Templates](#jinja-templates)
+        - [JINJA FUNCTIONS](#jinja-functions)
+            - [source](#source)
+            - [ref](#ref)
+            - [set](#set)
+            - [this](#this)
+            - [var](#var)
+            - [docs](#docs)
+        - [MACROS](#macros)
+    - [Using Packages](#using-packages)
+        - [dbt_date](#dbt_date)
+        - [codegen](#codegen)
+        - [dbt-audit-helper](#dbt-audit-helper)
+        - [dbt_project_evaluator](#dbt_project_evaluator)
+    - [Options for Data Quality Tests](#options-for-data-quality-tests)
+        - [DBT DATA Tests](#dbt-data-tests)
+        - [DBT-utils package](#dbt-utils-package)
+        - [DBT-expectations package](#dbt-expectations-package)
+    - [Storing Failing Test records](#storing-failing-test-records)
+    - [Configuring Test Severity](#configuring-test-severity)
+        - [at the poject level](#at-the-poject-level)
+        - [at the model level](#at-the-model-level)
+    - [Testing Guidelines](#testing-guidelines)
+    - [SQL Linting](#sql-linting)
 
 <!-- /TOC -->
 ## DBT DEFAULT FOLDER STRUCTURE
@@ -300,7 +302,37 @@ models:
 
 - `dbt-audit-helper` by [`dbt-labs`] provides a set of macros to compare data audits and can be incredibly useful:
   - when migrating from one database to another
-  - for testing the impact of model changes
+  - when doing code re-factoring for optimization
+  - when testing the impact of logic changes in (a) model(s)
+
+Comparisons can be saved in the `analyses` folder so that they don't execute during every run but are still handy to find when testing locally.
+
+Examples of how to use the most common audit macros can be found in the analyses folder of this repo
+
+To run them locally, you need to move them to `models` folder and execute in the usual way.
+
+```c
+(dbt_bq) angelina.teneva@angelinas-mbp dbt-data-transformations % dbt run --select compare_single_query_column
+10:19:46  Running with dbt=1.8.2
+10:19:47  Registered adapter: bigquery=1.8.1
+10:19:47  [WARNING]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 2 unused configuration paths:
+- models.dbt-data-transformations.the_look
+- models.dbt-data-transformations.the_look.transformations
+10:19:48  Found 49 models, 1 seed, 60 data tests, 7 sources, 984 macros
+10:19:48
+10:20:08  Concurrency: 1 threads (target='dev')
+10:20:08
+10:20:08  1 of 1 START sql view model the_data_challenge.compare_single_query_column ..... [RUN]
+10:20:09  1 of 1 OK created sql view model the_data_challenge.compare_single_query_column  [CREATE VIEW (0 processed) in 1.05s]
+10:20:09
+10:20:09  Finished running 1 view model in 0 hours 0 minutes and 21.08 seconds (21.08s).
+10:20:09
+10:20:09  Completed successfully
+10:20:09
+10:20:09  Done. PASS=1 WARN=0 ERROR=0 SKIP=0 TOTAL=1
+(dbt_bq) angelina.teneva@angelinas-mbp dbt-data-transformations %
+```
 
 ```sql
 {% set old_relation = adapter.get_relation(
@@ -364,7 +396,7 @@ models:
   - [Performance](https://dbt-labs.github.io/dbt-project-evaluator/latest/rules/performance/)
   - [Governance](https://dbt-labs.github.io/dbt-project-evaluator/latest/rules/governance/#public-models-without-contracts)
 
-- Execute the following command to see if best practices have been followed in your project
+- Execute the following command to see if the best practices defined above have been followed in your project
 
 ```cmd
 dbt build --select package:dbt_project_evaluator

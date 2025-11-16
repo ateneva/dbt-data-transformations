@@ -161,6 +161,10 @@ information.
 ### Authenticate to Big Query
 
 ```bash
+# authenticate for the first time
+gcloud auth login
+
+# refresh application default credentials
 gcloud auth application-default login
 ```
 
