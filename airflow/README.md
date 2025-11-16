@@ -7,8 +7,8 @@
 - [Setting up local Airflow instance](#setting-up-local-airflow-instance)
     - [Set up directory with the following structure and contents](#set-up-directory-with-the-following-structure-and-contents)
     - [Build a custom docker image that extends the official one](#build-a-custom-docker-image-that-extends-the-official-one)
+        - [Push the image to Artefact registry](#push-the-image-to-artefact-registry)
     - [Use the docker-compose.yml available in the official documentation](#use-the-docker-composeyml-available-in-the-official-documentation)
-    - [Push the image to Artefact registry](#push-the-image-to-artefact-registry)
     - [Spin up the local instance](#spin-up-the-local-instance)
     - [Gracefully stop the local instance](#gracefully-stop-the-local-instance)
 
@@ -45,19 +45,7 @@ astronomer-cosmos>=1.0.2
 docker build . --tag dbt-cosmos
 ```
 
-## Use the `docker-compose.yml` available in the [official documentation](https://airflow.apache.org/docs/apache-airflow/stable/docker-compose.yaml)
-
-- replace the `image` with the one you've built
-
-```yml
-x-airflow-common:
-  &airflow-common
-  image: ${AIRFLOW_IMAGE_NAME:-dbt-cosmos}
-  environment:
-  ...
-```
-
-## Push the image to Artefact registry
+### Push the image to Artefact registry
 
 ```bash
 # authenticate and configure docker
@@ -71,6 +59,31 @@ docker tag dbt-cosmos europe-west1-docker.pkg.dev/data-geeking-gcp/dbt-cosmos/db
 
 # push the image
 docker push `LOCATION`-docker.pkg.dev/`PROJECT-ID`/`REPOSITORY`/`IMAGE`
+```
+
+## Use the `docker-compose.yml` available in the [official documentation](https://airflow.apache.org/docs/apache-airflow/2.9.3/howto/docker-compose/index.html)
+
+- fetch the `docker-compose.yaml` image of the airflow version you'd like to build
+
+```bash
+curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.9.3/docker-compose.yaml'
+```
+
+- replace the `image` with the one you've built
+
+```yml
+x-airflow-common:
+  &airflow-common
+  image: ${AIRFLOW_IMAGE_NAME:-dbt-cosmos}
+  environment:
+  ...
+```
+
+- set up the airflow user
+
+```bash
+mkdir -p ./dags ./logs ./plugins ./config
+echo -e "AIRFLOW_UID=$(id -u)" > .env
 ```
 
 ## Spin up the local instance
