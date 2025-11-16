@@ -14,3 +14,11 @@ repos:
       additional_dependencies: ['dbt-bigquery==1.8.1', 'sqlfluff-templater-dbt==3.2.3']
     - id: sqlfluff-fix
       additional_dependencies: ['dbt-bigquery==1.8.1', 'sqlfluff-templater-dbt==3.2.3']
+
+- repo: https://github.com/dbt-checkpoint/dbt-checkpoint
+  rev: v1.2.1
+  hooks:
+    - id: dbt-compile
+    - id: check-script-semicolon
+    - id: check-script-ref-and-source
+    - id: check-script-has-no-table-name

@@ -16,7 +16,8 @@
     - [Enforcing Code Quality](#enforcing-code-quality)
         - [SQL Linting](#sql-linting)
         - [YAML Linting](#yaml-linting)
-        - [pre-commit hooks have been set up in this repo to check and fix for](#pre-commit-hooks-have-been-set-up-in-this-repo-to-check-and-fix-for)
+        - [pre-commit hooks](#pre-commit-hooks)
+        - [dbt pre-commit hooks](#dbt-pre-commit-hooks)
     - [Setting up Local Testing Environments](#setting-up-local-testing-environments)
 
 <!-- /TOC -->
@@ -117,14 +118,28 @@ yamllint my_file.yml
 yamllint .
 ```
 
-### [pre-commit hooks](https://github.com/pre-commit/pre-commit-hooks) have been set up in this repo to check and fix for
+### [pre-commit hooks](https://github.com/pre-commit/pre-commit-hooks)
+
+Pre-commit have been set up in this repo to check and fix for:
 
 - missing lines at the end
 - trailing whitespaces
 - violations of sql standards
 - errors in yaml syntax
 
-When working with the repo, make sure you've got the pre-commit installed so that they run upon your every commit
+### [dbt pre-commit hooks](https://github.com/dbt-checkpoint/dbt-checkpoint)
+
+dbt pre-commit hooks have been set up to check that:
+
+- there are no compilation errors
+
+- [no dbt script is directly referring to a table](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-script-has-no-table-name)
+
+- [script contains only existing sources or macros](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-script-ref-and-source)
+
+- [no semi-colons have been forgotten at the end of sql queries](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#remove-script-semicolon)
+
+Hence, when working with the repo, make sure you've got the pre-commit installed so that they run upon your every commit
 
 ```bash
 # install the githook scripts
