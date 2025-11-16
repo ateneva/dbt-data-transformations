@@ -7,7 +7,7 @@
 
 - Create a file with your terraform configuration
 
-```json
+```tf
 resource "google_bigquery_dataset" "the-look-dev" {
   dataset_id                  = "the_look_dev"
   friendly_name               = "the-look-dev"
