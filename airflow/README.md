@@ -88,5 +88,5 @@ You should be able to access Airflow UI on <http://localhost:8080>
 Once finished testing, you can bring down your airflow instance by running
 
 ```bash
-docker compose down
+docker compose --file docker-compose.yml down
 ```
