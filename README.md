@@ -117,7 +117,7 @@ yamllint my_file.yml
 yamllint .
 ```
 
-### pre-commit hooks have been set up in this repo to check and fix for
+### [pre-commit hooks](https://github.com/pre-commit/pre-commit-hooks) have been set up in this repo to check and fix for
 
 - missing lines at the end
 - trailing whitespaces
