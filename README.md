@@ -1,24 +1,79 @@
 
-# Setup
+# Project Setup
 
 <!-- markdownlint-disable MD007-->
 
 <!-- TOC -->
 
-- [Setup](#setup)
+- [Project Setup](#project-setup)
+    - [Data Modelling Principles & Guidelines](#data-modelling-principles--guidelines)
+        - [Be Analyst Friendly](#be-analyst-friendly)
+        - [Be Subject-Oriented](#be-subject-oriented)
+        - [Be Relevant](#be-relevant)
+        - [Be Cost Efficient](#be-cost-efficient)
+        - [Be Easy to Maintain](#be-easy-to-maintain)
+        - [Avoid complex dependencies](#avoid-complex-dependencies)
     - [Enforcing Code Quality](#enforcing-code-quality)
         - [SQL Linting](#sql-linting)
         - [YAML Linting](#yaml-linting)
         - [pre-commit hooks have been set up in this repo to check and fix for](#pre-commit-hooks-have-been-set-up-in-this-repo-to-check-and-fix-for)
-- [Data Modelling Principles & Guidelines](#data-modelling-principles--guidelines)
-    - [Be Analyst Friendly](#be-analyst-friendly)
-    - [Be Subject-Oriented](#be-subject-oriented)
-    - [Be Relevant](#be-relevant)
-    - [Be Cost Efficient](#be-cost-efficient)
-    - [Be Easy to Maintain](#be-easy-to-maintain)
-    - [Avoid complex dependencies](#avoid-complex-dependencies)
+    - [Setting up Local Testing Environments](#setting-up-local-testing-environments)
 
 <!-- /TOC -->
+
+---
+
+This project sets up the data modelling and day-to-day-operations of [theLook e-commerce](https://console.cloud.google.com/marketplace/product/bigquery-public-data/thelook-ecommerce) DWH leveraging:
+
+ - dbt-core
+
+ - BigQuery
+
+ - Cloud Composer
+
+ - Google Cloud Provider for Terraform
+
+---
+
+## Data Modelling Principles & Guidelines
+
+The DWH transformations of theLook e-commerce data were architected under the following principles and guidelines
+
+### Be Analyst Friendly
+
+- Analysts shouldn't have to do multiple joins to retrieve meaningful data
+
+### Be Subject-Oriented
+
+- Tables are organized around major topics of interest, such as customers, products, orders
+
+- Each subject represents One-Big-Table with nested arrays and structs
+  - child objects should never be orphans
+  - child objects will always be queried within the context of the parent object
+
+### Be Relevant
+
+- Data should reflect how current underlying platform functions
+
+- Data should reflect the topics of interest to business
+
+### Be Cost Efficient
+
+- Only process pieces of information that have changed
+
+- Avoid scanning too much data per run
+
+### Be Easy to Maintain
+
+- Backfilling historical data should be possible via the scheduled run without the need for extra code adjustments
+
+- Changes in data should be easy to trace and audit
+
+### Avoid complex dependencies
+
+- Processing by topic instead of monolitic schedules of all topics together
+
+---
 
 ## Enforcing Code Quality
 
@@ -80,40 +135,10 @@ pre-commit run --all-files
 
 ---
 
-# Data Modelling Principles & Guidelines
+## Setting up Local Testing Environments
 
-The DWH transformations of the Look e-commerce data were architected under the following principles and guidelines
+- [Airflow](https://github.com/ateneva/dbt-data-transformations/tree/main/airflow#readme)
 
-## Be Analyst Friendly
+- [dbt](https://github.com/ateneva/dbt-data-transformations/tree/main/dbt#dbt-local-setup)
 
-- Analysts shouldn't have to do multiple joins to retrieve meaningful data
-
-## Be Subject-Oriented
-
-- Tables are organized around major topics of interest, such as customers, products, orders
-
-- Each subject represents One-Big-Table with nested arrays and structs
-  - child objects should never be orphans
-  - child objects will always be queried within the context of the parent object
-
-## Be Relevant
-
-- Data should reflect how current underlying platform functions
-
-- Data should reflect the topics of interest to business
-
-## Be Cost Efficient
-
-- Only process pieces of information that have changed
-
-- Avoid scanning too much data per run
-
-## Be Easy to Maintain
-
-- Backfilling historical data should be possible via the scheduled run without the need for extra code adjustments
-
-- Changes in data should be easy to trace and audit
-
-## Avoid complex dependencies
-
-- Processing by topic instead of monolitic schedules of all topics
+- [GCP infra](https://github.com/ateneva/dbt-data-transformations/tree/main/terraform#readme)
