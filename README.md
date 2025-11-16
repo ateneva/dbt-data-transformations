@@ -122,6 +122,7 @@ yamllint .
 - missing lines at the end
 - trailing whitespaces
 - violations of sql standards
+- errors in yaml syntax
 
 When working with the repo, make sure you've got the pre-commit installed so that they run upon your every commit
 
@@ -137,8 +138,8 @@ pre-commit run --all-files
 
 ## Setting up Local Testing Environments
 
-- [Airflow](https://github.com/ateneva/dbt-data-transformations/tree/main/airflow#readme)
+- [Airflow: 2.9.3](https://github.com/ateneva/dbt-data-transformations/tree/main/airflow#readme)
 
-- [dbt](https://github.com/ateneva/dbt-data-transformations/tree/main/dbt#dbt-local-setup)
+- [dbt-core: 1.8.2](https://github.com/ateneva/dbt-data-transformations/tree/main/dbt#dbt-local-setup)
 
 - [GCP infra](https://github.com/ateneva/dbt-data-transformations/tree/main/terraform#readme)

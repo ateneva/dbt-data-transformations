@@ -4,6 +4,8 @@ repos:
   hooks:
     - id: end-of-file-fixer
     - id: trailing-whitespace
+    - id: check-yaml
+      include: \.(yaml|yml)$
 
 - repo: https://github.com/sqlfluff/sqlfluff
   rev: 3.2.3
