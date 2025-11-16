@@ -10,6 +10,7 @@
     - [Use the docker-compose.yml available in the official documentation](#use-the-docker-composeyml-available-in-the-official-documentation)
     - [Push the image to Artefact registry](#push-the-image-to-artefact-registry)
     - [Spin up the local instance](#spin-up-the-local-instance)
+    - [Gracefully stop the local instance](#gracefully-stop-the-local-instance)
 
 <!-- /TOC -->
 
@@ -74,8 +75,18 @@ docker push `LOCATION`-docker.pkg.dev/`PROJECT-ID`/`REPOSITORY`/`IMAGE`
 
 ## Spin up the local instance
 
+You can test a DAG locally by spinning up a local airflow instance using `docker compose`
+
 ```bash
 docker compose --file docker-compose.yml up
 ```
 
 You should be able to access Airflow UI on <http://localhost:8080>
+
+## Gracefully stop the local instance
+
+Once finished testing, you can bring down your airflow instance by running
+
+```bash
+docker compose down
+```
