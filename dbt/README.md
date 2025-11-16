@@ -1,28 +1,28 @@
 
-# Starting with DBT
+# Starting with dbt
 
 <!-- markdownlint-disable MD007-->
 
 <!-- TOC -->
 
-- [Starting with DBT](#starting-with-dbt)
-- [DBT Local Setup](#dbt-local-setup)
+- [Starting with dbt](#starting-with-dbt)
+- [dbt Local Setup](#dbt-local-setup)
     - [Create virtual environement](#create-virtual-environement)
-    - [Install DBT](#install-dbt)
+    - [Install dbt](#install-dbt)
         - [Check the installation has completed](#check-the-installation-has-completed)
         - [Run dbt debug to double check configuration](#run-dbt-debug-to-double-check-configuration)
     - [Configure connection profile](#configure-connection-profile)
     - [Install Packages](#install-packages)
     - [Authenticate to Big Query](#authenticate-to-big-query)
         - [After authenticating run dbt debug again to ensure your profile has been set up correctly](#after-authenticating-run-dbt-debug-again-to-ensure-your-profile-has-been-set-up-correctly)
-- [DBT Development Guidelines](#dbt-development-guidelines)
-    - [DBT DEFAULT FOLDER STRUCTURE](#dbt-default-folder-structure)
+- [dbt Development](#dbt-development)
+    - [dbt default folder structure](#dbt-default-folder-structure)
     - [USEFUL CLI commands](#useful-cli-commands)
-    - [Model Development guidelines](#model-development-guidelines)
+    - [Model Development Guidelines](#model-development-guidelines)
     - [Native Materialization Strategies](#native-materialization-strategies)
         - [What if the columns of my incremental model change?](#what-if-the-columns-of-my-incremental-model-change)
     - [JINJA Templates](#jinja-templates)
-        - [JINJA FUNCTIONS](#jinja-functions)
+        - [JINJA functions](#jinja-functions)
             - [source](#source)
             - [ref](#ref)
             - [set](#set)
@@ -36,10 +36,10 @@
         - [dbt-audit-helper](#dbt-audit-helper)
         - [dbt_project_evaluator](#dbt_project_evaluator)
     - [Options for Data Quality Tests](#options-for-data-quality-tests)
-        - [DBT DATA Tests](#dbt-data-tests)
-        - [DBT-utils package](#dbt-utils-package)
-        - [DBT-expectations package](#dbt-expectations-package)
-    - [Storing Failing Test records](#storing-failing-test-records)
+        - [dbt data tests](#dbt-data-tests)
+        - [dbt-utils package](#dbt-utils-package)
+        - [dbt-expectations package](#dbt-expectations-package)
+    - [Storing Failing Tests](#storing-failing-tests)
     - [Configuring Test Severity](#configuring-test-severity)
         - [at the poject level](#at-the-poject-level)
         - [at the model level](#at-the-model-level)
@@ -48,7 +48,7 @@
 
 <!-- /TOC -->
 
-# DBT Local Setup
+# dbt Local Setup
 
 ## Create virtual environement
 
@@ -56,7 +56,7 @@
 python3 -m venv dbt_bq
 ```
 
-## Install DBT
+## Install dbt
 
 - set up a requirements file
 
@@ -236,9 +236,9 @@ gcloud auth application-default login
 (dbt_bq) angelina.teneva@Angelinas-MacBook-Pro dbt-data-transformations %
 ```
 
-# DBT Development Guidelines
+# dbt Development
 
-## DBT DEFAULT FOLDER STRUCTURE
+## dbt default folder structure
 
 ```bash
 dbt
@@ -310,7 +310,7 @@ More about CLI is [here](https://docs.getdbt.com/reference/node-selection/syntax
 
 ---
 
-## Model Development guidelines
+## Model Development Guidelines
 
 - **DO USE** [`source`](https://docs.getdbt.com/reference/dbt-jinja-functions/source) and [`ref`](https://docs.getdbt.com/reference/dbt-jinja-functions/ref) functions to ensure the data lineage of your models is properly captured in the `manifest` file
 
@@ -320,7 +320,7 @@ More about CLI is [here](https://docs.getdbt.com/reference/node-selection/syntax
 
 - **DO explore** what [`incremental_strategy` configs](https://docs.getdbt.com/docs/build/incremental-strategy) are available for your database and consider their impact on cost generation
 
-- **DO** stick to the `SQL Best Practices` applicable to your database provider (DBT does not solve for bad SQL/SQL anti-pattens)
+- **DO** stick to the `SQL Best Practices` applicable to your database provider (dbt does not solve for bad SQL/SQL anti-pattens)
 
 ---
 
@@ -388,7 +388,7 @@ These will print text to the rendered file. In most cases in dbt, this will comp
 - `{# … #}` is used for comments
 This allows us to document our code inline. This will not be rendered in the pure SQL that you create when you run dbt compile or dbt run.
 
-### [JINJA FUNCTIONS](https://docs.getdbt.com/reference/dbt-jinja-functions)
+### [JINJA functions](https://docs.getdbt.com/reference/dbt-jinja-functions)
 
 #### [`source`](https://docs.getdbt.com/reference/dbt-jinja-functions/source)
 
@@ -608,7 +608,7 @@ dbt build --select package:dbt_project_evaluator
 
 ## Options for Data Quality Tests
 
-### [DBT DATA Tests](https://docs.getdbt.com/docs/build/data-tests)
+### [dbt data tests](https://docs.getdbt.com/docs/build/data-tests)
 
 - singular tests - <https://docs.getdbt.com/docs/build/data-tests#singular-data-tests>
 
@@ -669,7 +669,7 @@ from validation_errors
 {% endtest %}
 ```
 
-### [DBT-utils package](<https://hub.getdbt.com/dbt-labs/dbt_utils/latest/>)
+### [dbt-utils package](<https://hub.getdbt.com/dbt-labs/dbt_utils/latest/>)
 
 - `dbt_utils` is an open-source package by `dbt-labs` that is enabled in this repo.
 
@@ -717,7 +717,7 @@ models:
             - order_id
 ```
 
-### [DBT-expectations package](<https://hub.getdbt.com/calogica/dbt_expectations/latest/>)
+### [dbt-expectations package](<https://hub.getdbt.com/calogica/dbt_expectations/latest/>)
 
 - `dbt_expectations` is an open-source package created by `catalogica` that is enabled in this repo.
 
@@ -775,9 +775,9 @@ tests:
       row_condition: "id is not null" # (Optional)
 ```
 
-## [Storing Failing Test records](https://docs.getdbt.com/docs/build/data-tests#storing-test-failures)
+## [Storing Failing Tests](https://docs.getdbt.com/docs/build/data-tests#storing-test-failures)
 
-DBT has been configurted to store the failing records of every data quality test
+dbt has been configurted to store the failing records of every data quality test
 
 ```yml
 data_tests:
