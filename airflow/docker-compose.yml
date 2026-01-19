@@ -50,7 +50,7 @@ x-airflow-common:
   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
 
-  image: ${AIRFLOW_IMAGE_NAME:-dbt-cosmos:latest}
+  image: ${AIRFLOW_IMAGE_NAME:-dbt-cosmos-1.11:latest}
   # build: .
   environment:
     &airflow-common-env
@@ -116,9 +116,9 @@ services:
       start_period: 30s
     restart: always
 
-  airflow-webserver:
+  airflow-api-server:
     <<: *airflow-common
-    command: webserver
+    command: api-server
     ports:
       - "8080:8080"
     healthcheck:
