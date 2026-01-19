@@ -38,11 +38,11 @@ resource "google_composer_environment" "cloud_composer" {
   name = "cloud-composer"
   config {
     software_config {
-      image_version = "composer-2.8.7-airflow-2.7.3"
+      image_version = "composer-3-airflow-3.1.0"
       pypi_packages = {
-        dbt-core = "==1.8.2"
-        dbt-bigquery = "==1.8.1"
-        astronomer-cosmos = ">=1.0.2"
+        dbt-core = "==1.11.2"
+        dbt-bigquery = "==1.11.0"
+        astronomer-cosmos = "==1.12.0"
         }
     }
     node_config {
