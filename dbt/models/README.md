@@ -1,19 +1,47 @@
 
 # Project
 
-The project uses [thelook_ecommerce public dataset](https://console.cloud.google.com/bigquery?p=bigquery-public-data&d=thelook_ecommerce&page=dataset&invt=Abt44Q&project=data-geeking-gcp&ws=!1m4!1m3!3m2!1sbigquery-public-data!2sthelook_ecommerce)
-
 <!-- markdownlint-disable MD007 -->
 <!-- TOC -->
 
 - [Project](#project)
-    - [Data Qiuality Priciples](#data-qiuality-priciples)
+    - [Data Modelling Principles](#data-modelling-principles)
+    - [Code Quality Principles](#code-quality-principles)
+    - [Data Quality Principles](#data-quality-principles)
     - [Testing source freshnes](#testing-source-freshnes)
     - [Running tests on sources](#running-tests-on-sources)
 
 <!-- /TOC -->
 
-## Data Qiuality Priciples
+## Data Modelling Principles
+
+The project uses [thelook_ecommerce public dataset](https://console.cloud.google.com/bigquery?p=bigquery-public-data&d=thelook_ecommerce&page=dataset&invt=Abt44Q&project=data-geeking-gcp&ws=!1m4!1m3!3m2!1sbigquery-public-data!2sthelook_ecommerce)
+
+---
+
+## Code Quality Principles
+
+[dbt pre-commit hooks](https://github.com/dbt-checkpoint/dbt-checkpoint) have been set up to check that:
+
+- there are no compilation errors
+
+- [no dbt script is directly referring to a table](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-script-has-no-table-name)
+
+- [script contains only existing sources or macros](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-script-ref-and-source)
+
+- [no semi-colons have been forgotten at the end of sql queries](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#remove-script-semicolon)
+
+```yaml
+- repo: https://github.com/dbt-checkpoint/dbt-checkpoint
+  rev: v1.2.1
+  hooks:
+    - id: dbt-compile
+    - id: check-script-semicolon
+    - id: check-script-ref-and-source
+    - id: check-script-has-no-table-name
+```
+
+## Data Quality Principles
 
 > The following packages are used to ensure that each model has a set of pre-defined data quality checks and business logic checks.
 >> Additional source freshness checks are in place to ensure that the latest data is captured and updated in a timely manner.
