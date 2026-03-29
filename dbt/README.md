@@ -48,6 +48,8 @@
 
 <!-- /TOC -->
 
+<!-- markdownlint-disable MD025-->
+
 # dbt Local Setup
 
 ## Create virtual environement
@@ -306,7 +308,7 @@ dbt test --select --exclude source:*           # run ONLY tests defined on model
 dbt test --select source:<source name>         # run all tests defined on a source and all its tables
 ```
 
-More about CLI is [here](https://docs.getdbt.com/reference/node-selection/syntax).
+[More about CLI is here](https://docs.getdbt.com/reference/node-selection/syntax).
 
 ---
 
