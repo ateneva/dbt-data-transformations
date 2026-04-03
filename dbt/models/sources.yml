@@ -3,6 +3,11 @@ version: 2
 sources:
   - name: thelook_ecommerce
     database: bigquery-public-data
+    schema: thelook_ecommerce
+    freshness:
+      warn_after: {count: 1, period: day}
+      error_after: {count: 2, period: day}
+
     tables:
       - name: distribution_centers
         columns:
@@ -68,6 +73,10 @@ sources:
                   field: id
 
       - name: order_items
+        freshness: # Specific override for a high-frequency table
+          warn_after: {count: 24, period: hour}
+          error_after: {count: 48, period: hour}
+
         data_tests:
           - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
               date_col: created_at

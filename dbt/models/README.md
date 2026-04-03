@@ -8,8 +8,9 @@
     - [Data Modelling Principles](#data-modelling-principles)
     - [Code Quality Principles](#code-quality-principles)
     - [Data Quality Principles](#data-quality-principles)
-    - [Testing source freshnes](#testing-source-freshnes)
-    - [Running tests on sources](#running-tests-on-sources)
+        - [Each Source should be tested for freshness](#each-source-should-be-tested-for-freshness)
+        - [Each Source should have pre-defined data integrity and business logic checks](#each-source-should-have-pre-defined-data-integrity-and-business-logic-checks)
+        - [Each Model should have pre-defined data integrity and business logic checks](#each-model-should-have-pre-defined-data-integrity-and-business-logic-checks)
 
 <!-- /TOC -->
 
@@ -55,7 +56,62 @@ packages:
     version: 1.2.0
 ```
 
-Each model should have a set of pre-defined:
+### Each Source should be tested for freshness
+
+- configure freshness checks in `sources.yml` for each source and table
+
+```yaml
+  - name: thelook_ecommerce
+    database: bigquery-public-data
+    schema: thelook_ecommerce
+    freshness: # Default for all tables in this source
+      warn_after: {count: 1, period: day}
+      error_after: {count: 2, period: day}
+
+    #loaded_at_field: _etl_loaded_at
+    # If loaded_at_field is not provided,
+    # dbt will calculate freshness via warehouse metadata tables when possible
+
+    tables:
+      - name: orders
+        freshness: # Specific override for a high-frequency table
+          warn_after: {count: 24, period: hour}
+          error_after: {count: 48, period: hour}
+```
+
+- run freshness tests regularly to ensure that data is being updated in a timely manner and to identify any potential issues with data pipelines or sources.
+
+```bash
+# run freshness test on ALL sources
+dbt source freshness
+
+# run freshness test on a specific source
+dbt source freshness --select "source:thelook_ecommerce"
+```
+
+```plain
+16:47:10  Found 1 test, 7 sources, 875 macros
+16:47:10
+16:47:11  Concurrency: 1 threads (target='dev')
+16:47:11
+16:47:11  1 of 1 START freshness of thelook_ecommerce.orders ............................. [RUN]
+16:47:11  1 of 1 PASS freshness of thelook_ecommerce.orders .............................. [PASS in 0.38s]
+16:47:11
+16:47:11  Finished running 1 source in 0 hours 0 minutes and 1.51 seconds (1.51s).
+16:47:12  Done.
+```
+
+### Each Source should have pre-defined data integrity and business logic checks
+
+```bash
+# run test on ALL sources
+dbt test --select "source:*"
+
+# run the tests on a specific source
+dbt test --select "source:thelook_ecommerce"
+```
+
+### Each Model should have pre-defined data integrity and business logic checks
 
 - data integrity & consistency checks
 
@@ -109,31 +165,3 @@ Each model should have a set of pre-defined:
     - [expect_column_max_to_be_between](https://github.com/metaplane/dbt-expectations/tree/0.10.10/#expect_column_max_to_be_between)
 
     - [expect_column_min_to_be_between](https://github.com/metaplane/dbt-expectations/tree/0.10.10/#expect_column_min_to_be_between)
-
-## Testing source freshnes
-
-```bash
-dbt source freshness
-```
-
-```plain
-16:47:10  Found 1 test, 7 sources, 875 macros
-16:47:10
-16:47:11  Concurrency: 1 threads (target='dev')
-16:47:11
-16:47:11  1 of 1 START freshness of thelook_ecommerce.orders ............................. [RUN]
-16:47:11  1 of 1 PASS freshness of thelook_ecommerce.orders .............................. [PASS in 0.38s]
-16:47:11
-16:47:11  Finished running 1 source in 0 hours 0 minutes and 1.51 seconds (1.51s).
-16:47:12  Done.
-```
-
-## Running tests on sources
-
-```bash
-# run test on ALL sources
-dbt test --select "source:*"
-
-# run the tests on a specific source
-dbt test --select "source:thelook_ecommerce"
-```
