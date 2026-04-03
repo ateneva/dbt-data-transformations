@@ -22,3 +22,11 @@ repos:
       - id: check-script-semicolon
       - id: check-script-ref-and-source
       - id: check-script-has-no-table-name
+
+      - id: check-source-table-has-description
+
+      - id: check-source-has-tests
+        args: ["--test-cnt", "2", "--"]
+
+      - id: check-source-has-tests-by-group
+        args: ["--tests", "unique", "not_null", "relationships", "--test-cnt", "1", "--"]

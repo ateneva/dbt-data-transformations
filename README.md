@@ -17,7 +17,7 @@
         - [SQL Linting](#sql-linting)
         - [YAML Linting](#yaml-linting)
         - [pre-commit hooks](#pre-commit-hooks)
-        - [dbt pre-commit hooks](#dbt-pre-commit-hooks)
+        - [dbt-checkpoint hooks](#dbt-checkpoint-hooks)
     - [Setting up Local Testing Environments](#setting-up-local-testing-environments)
 
 <!-- /TOC -->
@@ -127,9 +127,9 @@ Pre-commit have been set up in this repo to check and fix for:
 - violations of sql standards
 - errors in yaml syntax
 
-### [dbt pre-commit hooks](https://github.com/dbt-checkpoint/dbt-checkpoint)
+### [dbt-checkpoint hooks](https://github.com/dbt-checkpoint/dbt-checkpoint)
 
-dbt pre-commit hooks have been set up to check that:
+dbt dbt-checkpoint hooks have been set up to check that:
 
 - there are no compilation errors
 
@@ -138,6 +138,12 @@ dbt pre-commit hooks have been set up to check that:
 - [script contains only existing sources or macros](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-script-ref-and-source)
 
 - [no semi-colons have been forgotten at the end of sql queries](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#remove-script-semicolon)
+
+- [check source has freshness](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-source-has-freshness)
+
+- [check source has tests](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-source-has-tests)
+
+- [check source has tests by group](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-source-has-tests-by-group)
 
 Hence, when working with the repo, make sure you've got the pre-commit installed so that they run upon your every commit
 
