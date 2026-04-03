@@ -32,6 +32,12 @@ The project uses [thelook_ecommerce public dataset](https://console.cloud.google
 
 - [no semi-colons have been forgotten at the end of sql queries](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#remove-script-semicolon)
 
+- [check source has freshness](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-source-has-freshness)
+
+- [check source has tests](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-source-has-tests)
+
+- [check source has tests by group](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-source-has-tests-by-group)
+
 ```yaml
 - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
   rev: v1.2.1
@@ -40,6 +46,13 @@ The project uses [thelook_ecommerce public dataset](https://console.cloud.google
     - id: check-script-semicolon
     - id: check-script-ref-and-source
     - id: check-script-has-no-table-name
+    - id: check-source-table-has-description
+
+    - id: check-source-has-tests
+        args: ["--test-cnt", "2", "--"]
+
+    - id: check-source-has-tests-by-group
+        args: ["--tests", "unique", "not_null", "relationships", "--test-cnt", "1", "--"]
 ```
 
 ## Data Quality Principles
