@@ -30,3 +30,10 @@ repos:
 
       - id: check-source-has-tests-by-group
         args: ["--tests", "unique", "not_null", "relationships", "--test-cnt", "1", "--"]
+
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.40.0
+    hooks:
+      - id: markdownlint
+        # It automatically looks for .markdownlint.yaml in the root
+        args: ["--config", ".markdownlint.yaml"]

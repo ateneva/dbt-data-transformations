@@ -6,19 +6,18 @@
 <!-- TOC -->
 
 - [Project Setup](#project-setup)
-    - [Data Modelling Principles & Guidelines](#data-modelling-principles--guidelines)
-        - [Be Analyst Friendly](#be-analyst-friendly)
-        - [Be Subject-Oriented](#be-subject-oriented)
-        - [Be Relevant](#be-relevant)
-        - [Be Cost Efficient](#be-cost-efficient)
-        - [Be Easy to Maintain](#be-easy-to-maintain)
-        - [Avoid complex dependencies](#avoid-complex-dependencies)
-    - [Enforcing Code Quality](#enforcing-code-quality)
-        - [SQL Linting](#sql-linting)
-        - [YAML Linting](#yaml-linting)
-        - [pre-commit hooks](#pre-commit-hooks)
-        - [dbt-checkpoint hooks](#dbt-checkpoint-hooks)
-    - [Setting up Local Testing Environments](#setting-up-local-testing-environments)
+  - [Data Modelling Principles \& Guidelines](#data-modelling-principles--guidelines)
+    - [Be Analyst Friendly](#be-analyst-friendly)
+    - [Be Subject-Oriented](#be-subject-oriented)
+    - [Be Relevant](#be-relevant)
+    - [Be Cost Efficient](#be-cost-efficient)
+    - [Be Easy to Maintain](#be-easy-to-maintain)
+    - [Avoid complex dependencies](#avoid-complex-dependencies)
+  - [Enforcing Code Quality](#enforcing-code-quality)
+    - [SQL Linting](#sql-linting)
+    - [YAML Linting](#yaml-linting)
+    - [Markdown Linting](#markdown-linting)
+  - [Setting up Local Testing Environments](#setting-up-local-testing-environments)
 
 <!-- /TOC -->
 
@@ -26,13 +25,13 @@
 
 This project sets up the data modelling and day-to-day-operations of [theLook e-commerce](https://console.cloud.google.com/marketplace/product/bigquery-public-data/thelook-ecommerce) DWH leveraging:
 
- - dbt-core
+- dbt-core
 
- - BigQuery
+- BigQuery
 
- - Cloud Composer
+- Cloud Composer
 
- - Google Cloud Provider for Terraform
+- Google Cloud Provider for Terraform
 
 ---
 
@@ -117,6 +116,12 @@ yamllint my_file.yml
 # OR
 yamllint .
 ```
+
+### Markdown Linting
+
+Linitng rules have been defined in `.markdownlint.yaml` and are enforced via `pymarkdownlint` pre-commit hooks
+
+```bash
 
 ### [pre-commit hooks](https://github.com/pre-commit/pre-commit-hooks)
 
