@@ -36,4 +36,4 @@ repos:
     hooks:
       - id: markdownlint
         # It automatically looks for .markdownlint.yaml in the root
-        args: ["--config", ".markdownlint.yaml"]
+        args: ["--config", ".markdownlint.yaml", "--fix"]
