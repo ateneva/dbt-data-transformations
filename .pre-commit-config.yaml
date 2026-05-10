@@ -37,3 +37,11 @@ repos:
       - id: markdownlint
         # It automatically looks for .markdownlint.yaml in the root
         args: ["--config", ".markdownlint.yaml", "--fix"]
+
+  - repo: local
+    hooks:
+      - id: terraform-fmt
+        name: terraform format
+        entry: terraform fmt
+        language: system
+        files: .tf$
