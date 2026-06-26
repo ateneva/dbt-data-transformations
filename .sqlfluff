@@ -25,15 +25,15 @@ align_scope = bracketed
 
 # AS should be there in table aliases
 [sqlfluff:rules:aliasing.table]
-aliasing.table = explicit
+aliasing = explicit
 
 # AS should be there for renamed columns
 [sqlfluff:rules:aliasing.column]
-aliasing.column = explicit
+aliasing = explicit
 
 # AS should be there after SUM(), MAX() etc
 [sqlfluff:rules:aliasing.expression]
-aliasing.expression = explicit
+aliasing = explicit
 
 # use ALL numbers in GROUP BY, ORDER BY
 [sqlfluff:rules:ambiguous.column_references]
