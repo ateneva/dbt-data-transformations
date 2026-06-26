@@ -8,12 +8,12 @@ repos:
         include: \.(yaml|yml)$
 
   - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 3.2.3
+    rev: 4.2.0
     hooks:
       - id: sqlfluff-lint
-        additional_dependencies: ['dbt-bigquery==1.8.1', 'sqlfluff-templater-dbt==3.2.3']
+        additional_dependencies: ['dbt-bigquery==1.11.0', 'sqlfluff-templater-dbt==4.2.0']
       - id: sqlfluff-fix
-        additional_dependencies: ['dbt-bigquery==1.8.1', 'sqlfluff-templater-dbt==3.2.3']
+        additional_dependencies: ['dbt-bigquery==1.11.0', 'sqlfluff-templater-dbt==4.2.0']
 
   - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
     rev: v1.2.1
