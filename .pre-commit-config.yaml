@@ -11,9 +11,9 @@ repos:
     rev: 4.2.0
     hooks:
       - id: sqlfluff-lint
-        additional_dependencies: ['dbt-bigquery==1.11.0', 'sqlfluff-templater-dbt==4.2.0']
+        additional_dependencies: ['dbt-bigquery==1.11.0', 'sqlfluff==4.2.0', 'sqlfluff-templater-dbt==4.2.0']
       - id: sqlfluff-fix
-        additional_dependencies: ['dbt-bigquery==1.11.0', 'sqlfluff-templater-dbt==4.2.0']
+        additional_dependencies: ['dbt-bigquery==1.11.0', 'sqlfluff==4.2.0', 'sqlfluff-templater-dbt==4.2.0']
 
   - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
     rev: v1.2.1
