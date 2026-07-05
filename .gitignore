@@ -4,3 +4,4 @@ dbt_packages
 target
 .vscode
 dbt_packages
+dbt_1.11
