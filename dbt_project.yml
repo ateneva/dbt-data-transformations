@@ -40,3 +40,7 @@ models:
 data_tests:
   +store_failures: true
   +schema: the_look_data_quality
+
+# ensure custom tests cross-referencing multiple topics are only called by 1 test task
+flags:
+  indirect_selection: buildable
