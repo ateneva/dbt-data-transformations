@@ -71,6 +71,7 @@ jobs:
           mkdir -p gh-pages
           cp -r target/compiled gh-pages/
           cp target/manifest.json gh-pages/
+          cp target/catalog.json gh-pages/
           cp target/index.html gh-pages/ || true
 
       - name: Upload GitHub Pages artifact
