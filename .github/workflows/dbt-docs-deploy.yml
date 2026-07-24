@@ -64,7 +64,7 @@ jobs:
 
       - name: Generate dbt docs
         run: |
-          dbt docs generate && dbt docs serve
+          dbt docs generate
 
       - name: Copy docs to GitHub Pages
         run: |
