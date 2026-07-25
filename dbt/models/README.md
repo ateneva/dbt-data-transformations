@@ -5,18 +5,32 @@
 <!-- TOC -->
 
 - [Project](#project)
-    - [Data Modelling Principles](#data-modelling-principles)
-    - [Code Quality Principles](#code-quality-principles)
-    - [Data Quality Principles](#data-quality-principles)
-        - [Each Source should be tested for freshness](#each-source-should-be-tested-for-freshness)
-        - [Each Source should have pre-defined data integrity and business logic checks](#each-source-should-have-pre-defined-data-integrity-and-business-logic-checks)
-        - [Each Model should have pre-defined data integrity and business logic checks](#each-model-should-have-pre-defined-data-integrity-and-business-logic-checks)
+  - [Data Modelling Principles](#data-modelling-principles)
+  - [Data Lineage](#data-lineage)
+  - [Data Integrity](#data-integrity)
+  - [Code Quality Principles](#code-quality-principles)
+  - [Data Quality Principles](#data-quality-principles)
+    - [Each Source should be tested for freshness](#each-source-should-be-tested-for-freshness)
+    - [Each Source should have pre-defined data integrity and business logic checks](#each-source-should-have-pre-defined-data-integrity-and-business-logic-checks)
+    - [Each Model should have pre-defined data integrity and business logic checks](#each-model-should-have-pre-defined-data-integrity-and-business-logic-checks)
 
 <!-- /TOC -->
 
 ## Data Modelling Principles
 
 The project uses [thelook_ecommerce public dataset](https://console.cloud.google.com/bigquery?p=bigquery-public-data&d=thelook_ecommerce&page=dataset&invt=Abt44Q&project=data-geeking-gcp&ws=!1m4!1m3!3m2!1sbigquery-public-data!2sthelook_ecommerce)
+
+---
+
+## Data Lineage
+
+`GitHub Actions` workflow that regenerates and deploys `dbt docs` on https://ateneva.github.io/dbt-data-transformations/#!/overview  gets triggered on merging a pull request
+
+This ensures up-to-date and easily traceable data lineage
+
+---
+
+## Data Integrity
 
 ---
 
