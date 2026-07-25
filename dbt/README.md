@@ -44,7 +44,6 @@
     - [at the project level](#at-the-project-level)
     - [at the model level](#at-the-model-level)
   - [Testing Guidelines](#testing-guidelines)
-  - [SQL Linting](#sql-linting)
 
 <!-- /TOC -->
 
@@ -856,24 +855,3 @@ select ...
 - Test `something unique about your data` like specific business logic.
 
 - Test the `freshness of your raw source data` (pipeline tests) to ensure models don’t run on stale data
-
-## SQL Linting
-
-To check if your SQL conforms to expected starndard, you can use `sqlfluff` to lint and fix your code formatting.
-
-The SQL standard has been defined in `.sqlfluff` file in the repo and it can be extended further with the options avaialble in <https://docs.sqlfluff.com/en/stable/reference/rules.html>
-
-To see you your SQL is compliant to the defined standard, you can run the following commands
-
-```bash
-# lint a specific file
-sqlfluff lint path/to/file.sql
-
-# lint a file directory
-sqlfluff lint directory/of/sql/files
-
-# let the linter fix your code
-sqlfluff fix folder/model.sql
-```
-
-The automatic fix is always best coupled with a `dbt compile` check after to make sure that no syntax errors were introduced

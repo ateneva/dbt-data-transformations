@@ -16,7 +16,10 @@
   - [Enforcing Code Quality](#enforcing-code-quality)
     - [SQL Linting](#sql-linting)
     - [YAML Linting](#yaml-linting)
-    - [Markdown Linting](#markdown-linting)
+    - [markdown linting](#markdown-linting)
+    - [general pre-commit hooks](#general-pre-commit-hooks)
+    - [dbt-checkpoint hooks](#dbt-checkpoint-hooks)
+    - [GitHub Actions](#github-actions)
   - [Setting up Local Testing Environments](#setting-up-local-testing-environments)
 
 <!-- /TOC -->
@@ -85,11 +88,24 @@ The following linters are in place
 
 - Python linting with default configuration via `pylint`
 
-- Markdown linting with default configuration with `pymarkdownlint`
+- Markdown linting with default configuration with `markdownlint`
+
+
 
 ### SQL Linting
 
-To see if your SQL is compliant to the defined standard, you can run the following commands
+- The SQL standard has been defined in `.sqlfluff` file in this repo and it can be extended further with the options avaialble in <https://docs.sqlfluff.com/en/stable/reference/rules.html>
+
+- SQL linting (and fixing) is enforced via [pre-commit hooks](https://docs.sqlfluff.com/en/latest/production/pre_commit.html) for `sqlfluff`
+
+  - The following commands run before every commit and check for violations in the committed files
+
+```bash
+sqlfluff-lint
+sqlfluff-fix
+```
+
+`sqlfluff fix` should resolve most errors but if fuurther debugging is required you can run the following commands locally
 
 ```bash
 # lint a specific file
@@ -101,10 +117,13 @@ sqlfluff lint directory/of/sql/files
 # let the linter fix your code
 sqlfluff fix folder/model.sql
 ```
-
-- SQL linting (and fixing) is enforced via [pre-commit hooks](https://docs.sqlfluff.com/en/latest/production/pre_commit.html) for `sqlfluff`
+---
 
 ### YAML Linting
+
+`yaml` lintin is enforced via the `check-yaml` pre-commit hook that checks the committed files
+
+If additional debugging is needed, the following commands cane be run manually
 
 ```bash
 # check which files will be linted by default
@@ -117,24 +136,26 @@ yamllint my_file.yml
 yamllint .
 ```
 
-### Markdown Linting
+### markdown linting
 
-Linitng rules have been defined in `.markdownlint.yaml` and are enforced via `pymarkdownlint` pre-commit hooks
+Linting rules have been defined in `.markdownlint.yaml` and is enforced via `markdownlint` pre-commit hook
 
-```bash
+---
 
-### [pre-commit hooks](https://github.com/pre-commit/pre-commit-hooks)
+### [general pre-commit hooks](https://github.com/pre-commit/pre-commit-hooks)
 
-Pre-commit have been set up in this repo to check and fix for:
+Additional `pre-commit hooks` have been set up in this repo to check and fix for:
 
 - missing lines at the end
 - trailing whitespaces
 - violations of sql standards
 - errors in yaml syntax
 
+---
+
 ### [dbt-checkpoint hooks](https://github.com/dbt-checkpoint/dbt-checkpoint)
 
-dbt dbt-checkpoint hooks have been set up to check that:
+`dbt-checkpoint` hooks have been set up to check that:
 
 - there are no compilation errors
 
@@ -159,6 +180,14 @@ pre-commit install
 # run against all existing files
 pre-commit run --all-files
 ```
+
+### GitHub Actions
+
+All pre-commit hooks that have been defined in the `.pre-commit-config.yaml` also kick off via GitHub Actions workflow on opening or modifying a pull-request
+
+ - No change can be made on the repo without opening a pull request
+
+ - Once opened, the pull request cannot be merged unless all checks have succeeded
 
 ---
 
