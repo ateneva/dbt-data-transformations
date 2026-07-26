@@ -7,12 +7,13 @@
 - [Project](#project)
   - [Data Modelling Principles](#data-modelling-principles)
   - [Data Lineage](#data-lineage)
-  - [Data Integrity](#data-integrity)
+  - [Data \& Code Integrity](#data--code-integrity)
   - [Code Quality Principles](#code-quality-principles)
   - [Data Quality Principles](#data-quality-principles)
     - [Each Source should be tested for freshness](#each-source-should-be-tested-for-freshness)
     - [Each Source should have pre-defined data integrity and business logic checks](#each-source-should-have-pre-defined-data-integrity-and-business-logic-checks)
     - [Each Model should have pre-defined data integrity and business logic checks](#each-model-should-have-pre-defined-data-integrity-and-business-logic-checks)
+    - [Further Testing Guidelines](#further-testing-guidelines)
 
 <!-- /TOC -->
 
@@ -30,7 +31,10 @@ This ensures up-to-date and easily traceable data lineage
 
 ---
 
-## Data Integrity
+## Data & Code Integrity
+
+- should be ensured through idempotent and self-describing code
+- data backfills should be handled by code rather than than flyway as much as possible
 
 ---
 
@@ -192,3 +196,14 @@ dbt test --select "source:thelook_ecommerce"
     - [expect_column_max_to_be_between](https://github.com/metaplane/dbt-expectations/tree/0.10.10/#expect_column_max_to_be_between)
 
     - [expect_column_min_to_be_between](https://github.com/metaplane/dbt-expectations/tree/0.10.10/#expect_column_min_to_be_between)
+
+
+### Further Testing Guidelines
+
+- Test for the grain of the table
+
+- Test for expected column values
+
+- Test `how one database object refers to another` by checking data in one table and comparing it to another table that is either a source of truth or is less modified
+
+- Test `something unique about your data` like specific business logic.
