@@ -6,14 +6,17 @@
 
 - [Project](#project)
   - [Data Modelling Principles](#data-modelling-principles)
-  - [Data Lineage](#data-lineage)
-  - [Data \& Code Integrity](#data--code-integrity)
-  - [Code Quality Principles](#code-quality-principles)
-  - [Data Quality Principles](#data-quality-principles)
+  - [Data Lineage \& Governance](#data-lineage--governance)
+    - [Data Lineage](#data-lineage)
+    - [Data Governance](#data-governance)
+  - [Data Integrity Principles](#data-integrity-principles)
+  - [Testing for Data Integrity](#testing-for-data-integrity)
     - [Each Source should be tested for freshness](#each-source-should-be-tested-for-freshness)
     - [Each Source should have pre-defined data integrity and business logic checks](#each-source-should-have-pre-defined-data-integrity-and-business-logic-checks)
     - [Each Model should have pre-defined data integrity and business logic checks](#each-model-should-have-pre-defined-data-integrity-and-business-logic-checks)
     - [Further Testing Guidelines](#further-testing-guidelines)
+  - [Code Quality Principles](#code-quality-principles)
+  - [Testing for Code Quality \& Data Integrity](#testing-for-code-quality--data-integrity)
 
 <!-- /TOC -->
 
@@ -23,57 +26,38 @@ The project uses [thelook_ecommerce public dataset](https://console.cloud.google
 
 ---
 
-## Data Lineage
+## Data Lineage & Governance
+
+### Data Lineage
 
 `GitHub Actions` workflow that regenerates and deploys `dbt docs` on https://ateneva.github.io/dbt-data-transformations/#!/overview  gets triggered on merging a pull request
 
-This ensures up-to-date and easily traceable data lineage
+This ensures up-to-date and easily traceable data lineage if:
 
----
+- `source` and  `ref` have been used for all models across the repo for all models and custom tests
 
-## Data & Code Integrity
 
-- should be ensured through idempotent and self-describing code
-- data backfills should be handled by code rather than than flyway as much as possible
+### Data Governance
+Data Governance metadata requirments are met by ensuring that ALL:
 
----
+- models are accompanied by a `yaml` file that holds all column descriptions and applicable data quality tests
 
-## Code Quality Principles
-
-[dbt pre-commit hooks](https://github.com/dbt-checkpoint/dbt-checkpoint) have been set up to check that:
-
-- there are no compilation errors
-
-- [no dbt script is directly referring to a table](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-script-has-no-table-name)
-
-- [script contains only existing sources or macros](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-script-ref-and-source)
-
-- [no semi-colons have been forgotten at the end of sql queries](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#remove-script-semicolon)
-
-- [check source has freshness](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-source-has-freshness)
-
-- [check source has tests](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-source-has-tests)
-
-- [check source has tests by group](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-source-has-tests-by-group)
+- provided `yaml` descriptions for tables and columns are persisted in BigQuery through the usage of
 
 ```yaml
-- repo: https://github.com/dbt-checkpoint/dbt-checkpoint
-  rev: v1.2.1
-  hooks:
-    - id: dbt-compile
-    - id: check-script-semicolon
-    - id: check-script-ref-and-source
-    - id: check-script-has-no-table-name
-    - id: check-source-table-has-description
-
-    - id: check-source-has-tests
-        args: ["--test-cnt", "2", "--"]
-
-    - id: check-source-has-tests-by-group
-        args: ["--tests", "unique", "not_null", "relationships", "--test-cnt", "1", "--"]
+  +persist_docs:
+    relation: true
+    columns: true
 ```
 
-## Data Quality Principles
+---
+
+## Data Integrity Principles
+
+- data backfills should be handled by code rather than than flyway as much as possible
+
+
+## Testing for Data Integrity
 
 > The following packages are used to ensure that each model has a set of pre-defined data quality checks and business logic checks.
 >> Additional source freshness checks are in place to ensure that the latest data is captured and updated in a timely manner.
@@ -207,3 +191,49 @@ dbt test --select "source:thelook_ecommerce"
 - Test `how one database object refers to another` by checking data in one table and comparing it to another table that is either a source of truth or is less modified
 
 - Test `something unique about your data` like specific business logic.
+
+---
+
+## Code Quality Principles
+
+> Code in this repo should be easily maintainable and promoting data integrity.
+
+
+---
+
+## Testing for Code Quality & Data Integrity
+
+> The following guardrails are in place to ensure that some of the key aspects of code quality, data integrity and data governance requirements mentioned above have been observed
+
+[dbt pre-commit hooks](https://github.com/dbt-checkpoint/dbt-checkpoint) have been set up to check that:
+
+- there are no compilation errors
+
+- [no dbt script is directly referring to a table](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-script-has-no-table-name)
+
+- [script contains only existing sources or macros](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-script-ref-and-source)
+
+- [no semi-colons have been forgotten at the end of sql queries](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#remove-script-semicolon)
+
+- [check source has freshness](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-source-has-freshness)
+
+- [check source has tests](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-source-has-tests)
+
+- [check source has tests by group](https://github.com/dbt-checkpoint/dbt-checkpoint/blob/main/HOOKS.md#check-source-has-tests-by-group)
+
+```yaml
+- repo: https://github.com/dbt-checkpoint/dbt-checkpoint
+  rev: v1.2.1
+  hooks:
+    - id: dbt-compile
+    - id: check-script-semicolon
+    - id: check-script-ref-and-source
+    - id: check-script-has-no-table-name
+    - id: check-source-table-has-description
+
+    - id: check-source-has-tests
+        args: ["--test-cnt", "2", "--"]
+
+    - id: check-source-has-tests-by-group
+        args: ["--tests", "unique", "not_null", "relationships", "--test-cnt", "1", "--"]
+```
