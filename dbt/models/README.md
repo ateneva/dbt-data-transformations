@@ -30,7 +30,7 @@ The project uses [thelook_ecommerce public dataset](https://console.cloud.google
 
 ### Data Lineage
 
-`GitHub Actions` workflow that regenerates and deploys `dbt docs` on https://ateneva.github.io/dbt-data-transformations/#!/overview  gets triggered on merging a pull request
+> `GitHub Actions` workflow that regenerates and deploys `dbt docs` on https://ateneva.github.io/dbt-data-transformations/#!/overview  gets triggered on merging a pull request
 
 This ensures up-to-date and easily traceable data lineage if:
 
@@ -38,7 +38,7 @@ This ensures up-to-date and easily traceable data lineage if:
 
 
 ### Data Governance
-Data Governance metadata requirments are met by ensuring that ALL:
+> Data Governance metadata requirments are met by ensuring that ALL:
 
 - models are accompanied by a `yaml` file that holds all column descriptions and applicable data quality tests
 
@@ -54,7 +54,13 @@ Data Governance metadata requirments are met by ensuring that ALL:
 
 ## Data Integrity Principles
 
-- data backfills should be handled by code rather than than flyway as much as possible
+- data backfills should be handled by regular code rather than `flyway` as much as possible
+
+  > this minimizes potential errors due to code differences and reduces cognitve load on code review
+
+- `append_new_columns` has been defined at project level to ensure that any newly added columns get  reflected without the need of running DDL statements through `flyway`
+
+  > `append_new_columns` was preferred over `sync_all_columns` to ensure that no downstream consumers are caught by surprise by the removal of a column and have been given appropriate notice prior deprecation
 
 
 ## Testing for Data Integrity
