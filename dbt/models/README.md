@@ -130,6 +130,9 @@ dbt test --select "source:*"
 
 # run the tests on a specific source
 dbt test --select "source:thelook_ecommerce"
+
+# test only a table wihtin a specific source
+dbt test --select source:thelook_ecommerce.users
 ```
 
 ### Each Model should have pre-defined data integrity and business logic checks

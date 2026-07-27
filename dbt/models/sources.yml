@@ -52,13 +52,20 @@ sources:
 
       - name: inventory_items
         description: "This table contains information about the inventory items available in the e-commerce store, including their quantities and locations."
+        config:
+          freshness: ## dynamic interval is needed for invenvotry depending on runtime
+            error_after: {
+              count: "{{ 6 if 1 <= modules.datetime.datetime.utcnow().hour <= 7 else 24 }}",
+              period: hour
+            }
+
         data_tests:
           - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
               arguments:
                 date_col: created_at
                 date_part: day
                 test_start_date: '2019-06-21'
-                test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
+                test_end_date: "{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}"
 
         columns:
           - name: id
@@ -96,7 +103,7 @@ sources:
                 date_col: created_at
                 date_part: day
                 test_start_date: '2019-06-21'
-                test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
+                test_end_date: "{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}"
 
         columns:
           - name: id
@@ -129,7 +136,7 @@ sources:
                 date_col: created_at
                 date_part: day
                 test_start_date: '2019-06-21'
-                test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
+                test_end_date: "{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}"
 
         columns:
           - name: order_id
@@ -164,4 +171,12 @@ sources:
                 date_col: created_at
                 date_part: day
                 test_start_date: '2019-06-21'
-                test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
+                test_end_date: "{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}"
+
+          - dbt_expectations.expect_grouped_row_values_to_have_recent_data:
+              arguments:
+                group_by: [traffic_source]
+                timestamp_column: created_at
+                datepart: day
+                interval: 7
+                row_condition: "DATE(created_at) >= CURRENT_DATE -1"
