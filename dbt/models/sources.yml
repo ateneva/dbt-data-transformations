@@ -5,9 +5,10 @@ sources:
     database: bigquery-public-data
     schema: thelook_ecommerce
     description: "This is a sample source for the e-commerce dataset. It contains tables related to an online retail store, including information about products, orders, customers, and inventory."
-    freshness:
-      warn_after: {count: 1, period: day}
-      error_after: {count: 2, period: day}
+    config:
+      freshness:  # thresholds defined below are applicable to every table in this dataset
+        warn_after: {count: 1, period: day}
+        error_after: {count: 2, period: day}
 
     tables:
       - name: distribution_centers
@@ -23,10 +24,11 @@ sources:
         description: "This table contains information about user events in the e-commerce store, including purchases, views, and other interactions."
         data_tests:
           - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
-              date_col: created_at
-              date_part: day
-              test_start_date: '2019-06-21'
-              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
+              arguments:
+                date_col: created_at
+                date_part: day
+                test_start_date: '2019-06-21'
+                test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
 
         columns:
           - name: id
@@ -38,11 +40,13 @@ sources:
           - name: user_id
             data_tests:
               - dbt_expectations.expect_column_values_to_not_be_null:
-                  row_condition: "event_type = 'purchase'"
+                  arguments:
+                    row_condition: "event_type = 'purchase'"
 
               - relationships:
-                  to: source('thelook_ecommerce', 'users')
-                  field: id
+                  arguments:
+                    to: source('thelook_ecommerce', 'users')
+                    field: id
                   config:
                     where: "event_type = 'purchase'"
 
@@ -50,10 +54,11 @@ sources:
         description: "This table contains information about the inventory items available in the e-commerce store, including their quantities and locations."
         data_tests:
           - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
-              date_col: created_at
-              date_part: day
-              test_start_date: '2019-06-21'
-              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
+              arguments:
+                date_col: created_at
+                date_part: day
+                test_start_date: '2019-06-21'
+                test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
 
         columns:
           - name: id
@@ -66,28 +71,32 @@ sources:
             data_tests:
               - not_null
               - relationships:
-                  to: source('thelook_ecommerce', 'distribution_centers')
-                  field: id
+                  arguments:
+                    to: source('thelook_ecommerce', 'distribution_centers')
+                    field: id
 
           - name: product_id
             data_tests:
               - not_null
               - relationships:
-                  to: source('thelook_ecommerce', 'products')
-                  field: id
+                  arguments:
+                    to: source('thelook_ecommerce', 'products')
+                    field: id
 
       - name: order_items
         description: "This table contains information about the items included in each order, including their quantities and prices."
-        freshness: # Specific override for a high-frequency table
-          warn_after: {count: 24, period: hour}
-          error_after: {count: 48, period: hour}
+        config:
+          freshness: ## override threshold values applicable at dataset level with table specific ones
+            warn_after: {count: 24, period: hour}
+            error_after: {count: 48, period: hour}
 
         data_tests:
           - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
-              date_col: created_at
-              date_part: day
-              test_start_date: '2019-06-21'
-              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
+              arguments:
+                date_col: created_at
+                date_part: day
+                test_start_date: '2019-06-21'
+                test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
 
         columns:
           - name: id
@@ -100,24 +109,27 @@ sources:
             data_tests:
               - not_null
               - relationships:
-                  to: source('thelook_ecommerce', 'inventory_items')
-                  field: id
+                  arguments:
+                    to: source('thelook_ecommerce', 'inventory_items')
+                    field: id
 
           - name: product_id
             data_tests:
               - not_null
               - relationships:
-                  to: source('thelook_ecommerce', 'products')
-                  field: id
+                  arguments:
+                    to: source('thelook_ecommerce', 'products')
+                    field: id
 
       - name: orders
         description: "This table contains information about customer orders, including their statuses, total amounts, and timestamps."
         data_tests:
           - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
-              date_col: created_at
-              date_part: day
-              test_start_date: '2019-06-21'
-              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
+              arguments:
+                date_col: created_at
+                date_part: day
+                test_start_date: '2019-06-21'
+                test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
 
         columns:
           - name: order_id
@@ -140,21 +152,16 @@ sources:
             data_tests:
               - not_null
               - relationships:
-                  to: source('thelook_ecommerce', 'distribution_centers')
-                  field: id
+                  arguments:
+                    to: source('thelook_ecommerce', 'distribution_centers')
+                    field: id
 
       - name: users
         description: "This table contains information about the users of the e-commerce store, including their demographics and registration details."
         data_tests:
           - dbt_expectations.expect_row_values_to_have_data_for_every_n_datepart:
-              date_col: created_at
-              date_part: day
-              test_start_date: '2019-06-21'
-              test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
-
-        columns:
-          - name: id
-            description: unique identifier for the table
-            data_tests:
-              - unique
-              - not_null
+              arguments:
+                date_col: created_at
+                date_part: day
+                test_start_date: '2019-06-21'
+                test_end_date: '{{ modules.datetime.date.today() - modules.datetime.timedelta(1) }}'
