@@ -49,6 +49,8 @@
       - [1. `manifest.json` (The Blueprint)](#1-manifestjson-the-blueprint)
       - [2. `catalog.json` (The Physical Reality)](#2-catalogjson-the-physical-reality)
     - [How They Work Together](#how-they-work-together)
+      - [`--compile` / `--no-compile`](#--compile----no-compile)
+      - [`--empty-catalog`](#--empty-catalog)
 
 <!-- /TOC -->
 
@@ -875,22 +877,28 @@ select ...
 
 > Think of `manifest.json` as the internal dependency graph of your dbt project. dbt parses all your Jinja, SQL, and YAML files and translates them into a single, comprehensive representation of your project structure.
 
-- `Contains:` Node relationships (DAG/lineage), model configs (materialization types), raw SQL, compiled SQL, documentation descriptions, and macro definitions.
+- *Contains:*
+  > Node relationships (DAG/lineage), model configs (materialization types), raw SQL, compiled SQL, documentation descriptions, and macro definitions.
 
-- `Common Use Cases:` `State-based selection / CI/CD:` Commands like `dbt run --select state:modified` compare your current project against a previous `manifest.json` to only build changed models.
+- *Common Use Cases*
+  > `State-based selection / CI/CD:` Commands like `dbt run --select state:modified` compare your current project against a previous `manifest.json` to only build changed models.
 
-- `Third-party integrations:` Modern data catalogs ingest `manifest.json` to map out lineage.
+- *Third-party integrations*
+  > Modern data catalogs ingest `manifest.json` to map out lineage.
 
 
 #### 2. `catalog.json` (The Physical Reality)
 
 > `catalog.json` represents what `actually exists` in your data warehouse. When you run `dbt docs generate`, dbt queries your warehouse's metadata tables (like `INFORMATION_SCHEMA.COLUMNS`) to collect physical details about your tables and views.
 
--  `Contains:` Column data types, row counts, table byte sizes, and actual database schema information
+- *Contains:*
+  > Column data types, row counts, table byte sizes, and actual database schema information
 
-- `Common Use Cases:` `dbt Docs UI:` Populating the column types, table sizes, and row counts shown in the generated documentation site.
+- *Common Use Cases:*
+  > `dbt Docs UI:` Populating the column types, table sizes, and row counts shown in the generated documentation site.
 
-- `Schema drift detection:` Comparing what dbt *thinks* should exist versus what actually exists in your data warehouse.
+- *Schema drift detection:*
+  > Comparing what dbt *thinks* should exist versus what actually exists in your data warehouse.
 
 ---
 
@@ -901,3 +909,38 @@ When you host or view the dbt Documentation site, it uses three files working in
 1. `index.html` (The web interface shell)
 2. `manifest.json` (Powers the lineage graph, model descriptions, and project tree)
 3. `catalog.json` (Fills in the physical table details like column types and row counts)
+
+
+When running `dbt docs generate`, dbt compiles your project (generating `manifest.json`) and queries your warehouse's metadata (generating `catalog.json`). You can customize this execution with several CLI flags:
+
+####  `--compile` / `--no-compile`
+> Determines whether dbt should re-compile your models and macros to build a fresh `manifest.json` before querying the database.
+
+```bash
+dbt docs generate --no-compile
+```
+
+>> *Use Case:* Pass `--no-compile` if you have already run `dbt compile` or `dbt run` immediately prior and want to save time.
+
+```bash
+14:02:10  Running with dbt=1.8.0
+14:02:10  Skipping compilation step...
+14:02:11  Building catalog..
+14:02:13  Catalog written to /path/to/project/target/catalog.json
+```
+
+####  `--empty-catalog`
+> Tells dbt to skip querying the warehouse altogether and generate a skeletal `catalog.json` file.
+
+```bash
+dbt docs generate --empty-catalog
+```
+
+>> *Use Case:* Useful in CI/CD pipelines or restricted environments where you want to verify that the documentation site builds without needing database credentials or spending warehouse credits.
+
+```bash
+14:04:00  Running with dbt=1.8.0
+14:04:01  Found 42 models, 88 tests, 0 exposures, 0 metrics
+14:04:01  Skipping catalog generation due to --empty-catalog...
+14:04:01  Catalog written to /path/to/project/target/catalog.json
+```
